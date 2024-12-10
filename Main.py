@@ -59,6 +59,11 @@ def ajouter_produits(fichier, produit):
     with open(fichier, 'a') as f:  # 'a' permet de si fichier deja cree modifier la valeur 
         f.write(f"{produit.nom}, {produit.prix}, {produit.quantite}")
 
+# Supprimer produit
+def supprim_produit(fichier, produit):
+    with open(fichier, 'a') as f:
+        produit = supprim_produit(produit,)
+
 # Exit 
 #def exit(produits):
     
