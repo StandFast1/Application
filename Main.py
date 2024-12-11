@@ -1,8 +1,13 @@
-
-# 
 import os
 
-# Creation des produits 
+
+# Fonction principal : 
+def gestion():
+    fichier = 'produits.txt'
+    produits = lecture_produits(fichier)
+
+
+# Class produit 
 class produit:
     def __init__(self, nom, prix, quantite, disponible=True):
         self.nom = nom
@@ -14,16 +19,6 @@ class produit:
         return f"Produit: {self.nom}, Prix: {self.prix}€, Quantite: {self.quantite}, Disponible : {self.disponible}"  #Indication par produit
     
 
-
-# Afficher le produit
-def afficher_produits(produits):
-    if not produits:
-        print("Produit introuvable")
-    else:
-        print(produits)
-
-
-
 # Lecture produits dans les fichiers
 def lecture_produits(fichier):
     produits = []
@@ -34,6 +29,16 @@ def lecture_produits(fichier):
                 if len(parts) == 4:
                     produits.append(produit(parts[0], parts[1], parts[2, parts[3]])) #verification ligne contien bien 4 valeurs
             produits
+
+
+# Afficher le produit
+def afficher_produits(produits):
+    if not produits:
+        print("Produit introuvable")
+    else:
+        for produit in produits:
+            print(produit)
+
 
 # Tri
 def triage_produits(produits, research):
@@ -47,6 +52,13 @@ def triage_produits(produits, research):
         return 
     else:
         return produits
+    
+# Algo Tri à bulles 
+def triage_bulles_produits(produits, research):
+    if research == 'nom':
+        return
+    else:
+        produits
 
 
 # Recherche 
@@ -55,14 +67,14 @@ def rechercher_produit(produits, nom):
     return resultat
 
 # Ajouter/supprimer des produits
-def ajouter_produits(fichier, produit):
+def ajouter_produits(fichier, produits):
     with open(fichier, 'a') as f:  # 'a' permet de si fichier deja cree modifier la valeur 
-        f.write(f"{produit.nom}, {produit.prix}, {produit.quantite}")
+        f.write(f"{produits.nom}, {produits.prix}, {produits.quantite}")
 
 # Supprimer produit
-def supprim_produit(fichier, produit):
+def supprim_produit(fichier, produits):
     with open(fichier, 'a') as f:
-        produit = supprim_produit(produit,)
+        produits = supprim_produit(produits)
 
 # Exit 
 #def exit(produits):
@@ -85,20 +97,20 @@ def menu_interactif():
 
         choix = input("Choisir : ")
 
-        if choix == 1 :
+        if choix == '1' :
             afficher_produits(produit)
         
-        elif choix == 2:
+        elif choix == '2':
             research = input("Trie par Nom Prix Quantite Disponibilite :")
-            produits_tri = tri(produit, research)
+            produits_tri = produits_tri(produit, research)
             triage_produits(produits_tri)
         
-        elif choix == 3:
+        elif choix == '3':
             rechercher_produit = input("Produit a rechercher :")
             recherche = rechercher_produit(produit, rechercher_produit)
             rechercher_produit(recherche)
         
-        elif choix == 4:
+        elif choix == '4':
            # ajouter_produits = input("Ajouter produit: ")
            # ajout = ajouter_produits(produit)
             nom = input("Nom :")
@@ -106,14 +118,17 @@ def menu_interactif():
             quantite = input("Quantité :")
             produit 
             ajouter_produits(fichier, produit)
-            produits.append(produit)
+            produit.append(produit)
             print("Produit ajouter dans votre reserve")
 
-        elif == 5:
+        elif choix == '5':
             print("Exit")
             break
 
         else:
             print("Valeur non valide veuillez recommencer: ")
+
+if __name__ == "__main__":
+    menu_interactif()
 
      
