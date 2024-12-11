@@ -1,5 +1,4 @@
-import os
-import time
+import os, time 
 
 
 # Fonction principal : 
@@ -29,7 +28,7 @@ def lecture_produits(fichier):
                 parts = ligne.strip().split(',') #Suppression espace
                 if len(parts) == 4:
                     produits.append(Produit(parts[0], parts[1], parts[2, parts[3]])) #verification ligne contien bien 4 valeurs
-            produits
+    return produits
 
 
 
@@ -64,7 +63,7 @@ def rechercher_produit(produits, nom):
 # Ajouter/supprimer des produits
 def ajouter_produits(fichier, produit):
     with open(fichier, 'a') as f:  # 'a' permet de si fichier deja cree modifier la valeur 
-        f.write(f"{produit.nom}, {produit.prix}, {produit.quantite}")
+        f.write(f"{produit.nom},{produit.prix},{produit.quantite}")
 
 # Supprimer produit
 def supprim_produit(fichier, produits):
