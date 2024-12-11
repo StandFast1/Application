@@ -1,4 +1,5 @@
 import os
+import time
 
 
 # Fonction principal : 
@@ -8,7 +9,7 @@ def gestion():
 
 
 # Class produit 
-class produit:
+class Produit:
     def __init__(self, nom, prix, quantite, disponible=True):
         self.nom = nom
         self.prix = float(prix)          # Valeur à virgules
@@ -27,17 +28,11 @@ def lecture_produits(fichier):
             for ligne in f: # parcours ligne par ligne
                 parts = ligne.strip().split(',') #Suppression espace
                 if len(parts) == 4:
-                    produits.append(produit(parts[0], parts[1], parts[2, parts[3]])) #verification ligne contien bien 4 valeurs
+                    produits.append(Produit(parts[0], parts[1], parts[2, parts[3]])) #verification ligne contien bien 4 valeurs
             produits
 
 
-# Afficher le produit
-def afficher_produits(produits):
-    if not produits:
-        print("Produit introuvable")
-    else:
-        for produit in produits:
-            print(produit)
+
 
 
 # Tri
@@ -67,9 +62,9 @@ def rechercher_produit(produits, nom):
     return resultat
 
 # Ajouter/supprimer des produits
-def ajouter_produits(fichier, produits):
+def ajouter_produits(fichier, produit):
     with open(fichier, 'a') as f:  # 'a' permet de si fichier deja cree modifier la valeur 
-        f.write(f"{produits.nom}, {produits.prix}, {produits.quantite}")
+        f.write(f"{produit.nom}, {produit.prix}, {produit.quantite}")
 
 # Supprimer produit
 def supprim_produit(fichier, produits):
@@ -79,16 +74,22 @@ def supprim_produit(fichier, produits):
 # Exit 
 #def exit(produits):
     
-
+# Afficher liste produit
+def afficher_produits(produits):
+    if not produits:
+        print("\nAucun Produit\n")
+    else:
+        for produit in produits:
+            print(produit)
 
 
 # Menu interactif 
 def menu_interactif():
     fichier = 'produits.txt'
-    produit = lecture_produits(fichier)
+    produits = lecture_produits(fichier)
     
     while True : 
-        print("Menu")
+        print("\n\nMenu")
         print("1 - Voir Liste Produits")
         print("2 - Trier produits")
         print("3 - Rechercher Produits")
@@ -98,7 +99,7 @@ def menu_interactif():
         choix = input("Choisir : ")
 
         if choix == '1' :
-            afficher_produits(produit)
+            afficher_produits(produits)
         
         elif choix == '2':
             research = input("Trie par Nom Prix Quantite Disponibilite :")
@@ -111,14 +112,12 @@ def menu_interactif():
             rechercher_produit(recherche)
         
         elif choix == '4':
-           # ajouter_produits = input("Ajouter produit: ")
-           # ajout = ajouter_produits(produit)
-            nom = input("Nom :")
-            prix = input("Prix :")
-            quantite = input("Quantité :")
-            produit 
+            nom = input("Nom : ")
+            prix = input("Prix : ")
+            quantite = input("Quantité : ")
+            produit = Produit(nom, prix, quantite)
             ajouter_produits(fichier, produit)
-            produit.append(produit)
+            produits.append(produit)
             print("Produit ajouter dans votre reserve")
 
         elif choix == '5':
@@ -126,9 +125,7 @@ def menu_interactif():
             break
 
         else:
-            print("Valeur non valide veuillez recommencer: ")
+            print("Valeur non valide veuillez recommencer")
 
 if __name__ == "__main__":
     menu_interactif()
-
-     
