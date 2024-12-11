@@ -126,7 +126,8 @@ def menu_interactif():
             elif choix2 == '2':
                 research = input("Trie par \nNom \nPrix \nQuantite disponibilite\n Choisir :")
                 produits_tri = produits_tri(produit, research)
-                triage_bulles_produits(produits_tri)
+                triage_bulles_produits(produits_tri, research)
+            
             else:
                 print("Valeur incorrect → Exit")
                 break
