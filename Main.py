@@ -1,49 +1,43 @@
 import os, time 
 
-
-# Fonction principal : 
+# Fonction principale :
 def gestion():
     fichier = 'produits.txt'
     produits = lecture_produits(fichier)
 
-
-# Class produit 
+# Classe Produit 
 class Produit:
     def __init__(self, nom, prix, quantite, disponible=True):
         self.nom = nom
         self.prix = float(prix)          # Valeur à virgules
         self.quantite = int(quantite)
-        self.disponible = disponible     # Par default disponible
+        self.disponible = disponible     # Par défaut disponible
 
     def __str__(self):
-        return f"Produit: {self.nom}, Prix: {self.prix}€, Quantite: {self.quantite}, Disponible : {self.disponible}"  #Indication par produit
+        return f"Produit: {self.nom}, Prix: {self.prix}€, Quantite: {self.quantite}, Disponible: {self.disponible}"  # Indication par produit
     
 
 # Lecture produits dans les fichiers
 def lecture_produits(fichier):
     produits = []
-    if os.path.exists(fichier): # verification existance fichier
-        with open(fichier, 'r') as f: #ouvir et fermer les fichiers
-            for ligne in f: # parcours ligne par ligne
-                parts = ligne.strip().split(',') #Suppression espace
+    if os.path.exists(fichier): # Vérification existence fichier
+        with open(fichier, 'r') as f: # Ouvrir et fermer les fichiers
+            for ligne in f: # Parcours ligne par ligne
+                parts = ligne.strip().split(',') # Suppression espace
                 if len(parts) == 4:
-                    produits.append(Produit(parts[0], parts[1], parts[2, parts[3]])) #verification ligne contien bien 4 valeurs
+                    produits.append(Produit(parts[0], parts[1], parts[2], parts[3])) # Vérification ligne contient bien 4 valeurs
     return produits
 
-
-
-
-
 # Tri
-def triage_produits(produits, research):
-    if research == 'nom':
-        return 
-    elif research == 'prix':
-        return
-    elif research == 'quantite':
-        return
-    elif research == 'disponible':
-        return 
+def triage_produits(produits, critere):
+    if critere == 'nom':
+        return sorted(produits, key=lambda x: x.nom)
+    elif critere == 'prix':
+        return sorted(produits, key=lambda x: x.prix)
+    elif critere == 'quantite':
+        return sorted(produits, key=lambda x: x.quantite)
+    elif critere == 'disponible':
+        return sorted(produits, key=lambda x: x.disponible)
     else:
         return produits
     
@@ -51,7 +45,7 @@ def triage_produits(produits, research):
 def triage_bulles_produits(produits, choix):
     n = len(produits)
     for i in range(n):
-        for j in range():
+        for j in range(0, n - i - 1):  # Correction de la boucle range
             if choix == 'nom':
                 if produits[j].nom > produits[j+1].nom : 
                     produits[j], produits[j+1] = produits[j+1], produits[j]
@@ -64,30 +58,28 @@ def triage_bulles_produits(produits, choix):
                 if produits[j].quantite > produits[j+1].quantite : 
                     produits[j], produits[j+1] = produits[j+1], produits[j]
 
-            else:
-                print(f"Produit tri {choix}")
-                return produits
-
-
+    return produits
 
 # Recherche 
 def rechercher_produit(produits, nom):
     resultat = [p for p in produits if nom.lower() in p.nom.lower()]
     return resultat
 
-# Ajouter/supprimer des produits
+# Ajouter des produits
 def ajouter_produits(fichier, produit):
-    with open(fichier, 'a') as f:  # 'a' permet de si fichier deja cree modifier la valeur 
-        f.write(f"{produit.nom},{produit.prix},{produit.quantite}")
+    with open(fichier, 'a') as f:  # 'a' permet de si fichier déjà créé modifier la valeur 
+        f.write(f"{produit.nom},{produit.prix},{produit.quantite},{produit.disponible}\n")
 
 # Supprimer produit
-def supprim_produit(fichier, produits):
-    with open(fichier, 'a') as f:
-        produits = supprim_produit(produits)
-
-# Exit 
-#def exit(produits):
+def supprim_produit(fichier, produits, nom_produit):
+    produits = [p for p in produits if p.nom != nom_produit]
     
+    with open(fichier, 'w') as f:
+        for produit in produits:
+            f.write(f"{produit.nom},{produit.prix},{produit.quantite},{produit.disponible}\n")
+    
+    return produits
+
 # Afficher liste produit
 def afficher_produits(produits):
     if not produits:
@@ -95,7 +87,6 @@ def afficher_produits(produits):
     else:
         for produit in produits:
             print(produit)
-
 
 # Menu interactif 
 def menu_interactif():
@@ -107,51 +98,59 @@ def menu_interactif():
         print("1 - Voir Liste Produits")
         print("2 - Trier produits")
         print("3 - Rechercher Produits")
-        print("4 - Ajouter/supprimer des produits")
-        print("5 - Exit")
+        print("4 - Ajouter des produits")
+        print("5 - Supprimer des produits")
+        print("6 - Exit")
 
         choix = input("Choisir : ")
 
-        if choix == '1' :
+        if choix == '1':
             afficher_produits(produits)
         
         elif choix == '2':
             print("\nQuel modèle de tri ?\n 1- Normal \n 2- A bulles")
-            choix2 = input("Choisir :")
+            choix2 = input("Choisir : ")
             if choix2 == '1':
-                research = input("Trie par \nNom \nPrix \nQuantite disponibilite\n Choisir :")
-                produits_tri = produits_tri(produit, research)
-                triage_produits(produits_tri)
+                critere = input("Trier par :\nNom\nPrix\nQuantite\nDisponibilite\nChoisir : ")
+                produits = triage_produits(produits, critere.lower())
+                afficher_produits(produits)
 
             elif choix2 == '2':
-                research = input("Trie par \nNom \nPrix \nQuantite disponibilite\n Choisir :")
-                produits_tri = produits_tri(produit, research)
-                triage_bulles_produits(produits_tri, research)
+                critere = input("Trier par :\nNom\nPrix\nQuantite\nDisponibilite\nChoisir : ")
+                produits = triage_bulles_produits(produits, critere.lower())
+                print(f"\nProduits triés par {critere} avec tri à bulles :")
+                afficher_produits(produits)
             
             else:
-                print("Valeur incorrect → Exit")
+                print("Valeur incorrecte → Exit")
                 break
         
         elif choix == '3':
-            rechercher_produit = input("Produit a rechercher :")
-            recherche = rechercher_produit(produit, rechercher_produit)
-            rechercher_produit(recherche)
+            recherche = input("Produit à rechercher : ")
+            resultats = rechercher_produit(produits, recherche)
+            afficher_produits(resultats)
         
         elif choix == '4':
             nom = input("Nom : ")
             prix = input("Prix : ")
             quantite = input("Quantité : ")
-            produit = Produit(nom, prix, quantite)
+            disponible = input("Disponible (True/False) : ")
+            produit = Produit(nom, prix, quantite, disponible)
             ajouter_produits(fichier, produit)
             produits.append(produit)
-            print("Produit ajouter dans votre reserve")
+            print("Produit ajouté dans votre réserve")
 
         elif choix == '5':
+            nom_produit = input("Nom du produit à supprimer : ")
+            produits = supprim_produit(fichier, produits, nom_produit)
+            print(f"Produit {nom_produit} supprimé")
+
+        elif choix == '6':
             print("Exit")
             break
 
         else:
-            print("Valeur non valide veuillez recommencer")
+            print("Valeur non valide, veuillez recommencer")
 
 if __name__ == "__main__":
     menu_interactif()
