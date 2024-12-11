@@ -48,11 +48,26 @@ def triage_produits(produits, research):
         return produits
     
 # Algo Tri à bulles 
-def triage_bulles_produits(produits, research):
-    if research == 'nom':
-        return
-    else:
-        produits
+def triage_bulles_produits(produits, choix):
+    n = len(produits)
+    for i in range(n):
+        for j in range():
+            if choix == 'nom':
+                if produits[j].nom > produits[j+1].nom : 
+                    produits[j], produits[j+1] = produits[j+1], produits[j]
+
+            elif choix == 'prix':
+                if produits[j].prix > produits[j+1].prix : 
+                    produits[j], produits[j+1] = produits[j+1], produits[j]
+
+            elif choix == 'quantite':
+                if produits[j].quantite > produits[j+1].quantite : 
+                    produits[j], produits[j+1] = produits[j+1], produits[j]
+
+            else:
+                print(f"Produit tri {choix}")
+                return produits
+
 
 
 # Recherche 
@@ -101,9 +116,20 @@ def menu_interactif():
             afficher_produits(produits)
         
         elif choix == '2':
-            research = input("Trie par Nom Prix Quantite Disponibilite :")
-            produits_tri = produits_tri(produit, research)
-            triage_produits(produits_tri)
+            print("\nQuel modèle de tri ?\n 1- Normal \n 2- A bulles")
+            choix2 = input("Choisir :")
+            if choix2 == '1':
+                research = input("Trie par \nNom \nPrix \nQuantite disponibilite\n Choisir :")
+                produits_tri = produits_tri(produit, research)
+                triage_produits(produits_tri)
+
+            elif choix2 == '2':
+                research = input("Trie par \nNom \nPrix \nQuantite disponibilite\n Choisir :")
+                produits_tri = produits_tri(produit, research)
+                triage_bulles_produits(produits_tri)
+            else:
+                print("Valeur incorrect → Exit")
+                break
         
         elif choix == '3':
             rechercher_produit = input("Produit a rechercher :")
