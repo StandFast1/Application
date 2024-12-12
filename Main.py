@@ -30,14 +30,19 @@ def lecture_produits(fichier):
 
 # Tri normal
 def triage_produits(produits, choix):
+
     if choix == 'nom':
         return sorted(produits, key=lambda x: x.nom)
+    
     elif choix == 'prix':
         return sorted(produits, key=lambda x: x.prix)
+    
     elif choix == 'quantite':
         return sorted(produits, key=lambda x: x.quantite)
+    
     elif choix == 'disponible':
         return sorted(produits, key=lambda x: x.disponible)
+    
     else:
         return produits
     
@@ -45,7 +50,8 @@ def triage_produits(produits, choix):
 def triage_bulles_produits(produits, choix):
     n = len(produits)
     for i in range(n):
-        for j in range(0, n - i - 1):  # Correction de la boucle range
+        for j in range(0, n - i-1):  # -1 pcq le dernier element deja verifier dcp plus besoins
+
             if choix == 'nom':
                 if produits[j].nom > produits[j+1].nom : 
                     produits[j], produits[j+1] = produits[j+1], produits[j]
@@ -54,8 +60,9 @@ def triage_bulles_produits(produits, choix):
                 if produits[j].prix > produits[j+1].prix : 
                     produits[j], produits[j+1] = produits[j+1], produits[j]
 
+
             elif choix == 'quantite':
-                if produits[j].quantite > produits[j+1].quantite : 
+                if produits[j].quantite > produits[j+1].quantite :
                     produits[j], produits[j+1] = produits[j+1], produits[j]
 
     return produits
@@ -72,7 +79,7 @@ def ajouter_produits(fichier, produit):
 
 # Supprimer produit
 def supprim_produit(fichier, produits, nom_produit):
-    produits = [p for p in produits if p.nom != nom_produit]
+    produits = [p for p in produits if p.nom.lower() != nom_produit.lower()]
     
     with open(fichier, 'w') as f:
         for produit in produits:
