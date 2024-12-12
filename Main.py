@@ -134,7 +134,7 @@ def menu_interactif():
             nom = input("Nom : ")
             prix = input("Prix : ")
             quantite = input("Quantité : ")
-            disponible = input("Disponible (True/False) : ")
+            disponible = input("Disponible Oui / Non : ")
             produit = Produit(nom, prix, quantite, disponible)
             ajouter_produits(fichier, produit)
             produits.append(produit)
