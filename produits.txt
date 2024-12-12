@@ -1,2 +1,3 @@
 Abrico,2.0,1,Non
 Patate,60.0,0,Non
+AA,30.0,40,Oui

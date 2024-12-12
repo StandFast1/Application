@@ -111,7 +111,7 @@ def menu_interactif():
 
         choix = input("Choisir : ")
 
-        if choix == '1':
+        if choix == '1': 
             afficher_produits(produits)
         
         elif choix == '2':
@@ -148,7 +148,7 @@ def menu_interactif():
             print("Produit ajouté dans votre réserve")
 
         elif choix == '5':
-            nom_produit = input("Nom du produit à supprimer : ")
+            nom_produit = input("Nom du produit à supprimer (ecrire en toute lettre): ")
             produits = supprim_produit(fichier, produits, nom_produit)
             print(f"Produit {nom_produit} supprimé")
 
