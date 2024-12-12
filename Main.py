@@ -9,9 +9,9 @@ def gestion():
 class Produit:
     def __init__(self, nom, prix, quantite, disponible=True):
         self.nom = nom
-        self.prix = float(prix)          # Valeur à virgules
+        self.prix = float(prix)          
         self.quantite = int(quantite)
-        self.disponible = disponible     # Par défaut disponible
+        self.disponible = disponible     
 
     def __str__(self):
         return f"Produit: {self.nom}, Prix: {self.prix}€, Quantite: {self.quantite}, Disponible: {self.disponible}"  # Indication par produit
@@ -25,18 +25,18 @@ def lecture_produits(fichier):
             for ligne in f: # Parcours ligne par ligne
                 parts = ligne.strip().split(',') # Suppression espace
                 if len(parts) == 4:
-                    produits.append(Produit(parts[0], parts[1], parts[2], parts[3])) # Vérification ligne contient bien 4 valeurs
+                    produits.append(Produit(parts[0], parts[1], parts[2], parts[3])) # Vérification 4 valeurs
     return produits
 
-# Tri
-def triage_produits(produits, critere):
-    if critere == 'nom':
+# Tri normal
+def triage_produits(produits, choix):
+    if choix == 'nom':
         return sorted(produits, key=lambda x: x.nom)
-    elif critere == 'prix':
+    elif choix == 'prix':
         return sorted(produits, key=lambda x: x.prix)
-    elif critere == 'quantite':
+    elif choix == 'quantite':
         return sorted(produits, key=lambda x: x.quantite)
-    elif critere == 'disponible':
+    elif choix == 'disponible':
         return sorted(produits, key=lambda x: x.disponible)
     else:
         return produits
