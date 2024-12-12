@@ -15,7 +15,18 @@ def creation_compte(self):
             with open(self.fichier_utilisateurs, 'w', newline='') as fichier:
                 writer = csv.writer(fichier)
                 writer.writerow(['nom_utilisateur', 'mot_de_passe', 'grade'])
-    
+
+# Verification utilisateur
+def verification_utilisateur():
+    with open(self.fichier_utilisateur, 'r') as fichier:
+        lecture = csv.Dialect(fichier)
+        return any(ligne['nom_utilisateur'] == nom_utilisateur for ligne in lecture)
+
+
+# Creation d'un utilisateur
+def nouveau_utlisateur():
+    if self.
+
 def nom_utilisateur():
     
     
@@ -43,7 +54,7 @@ def menu():
         if choix == '1':
             nom_utilisateur = input("Indiquer nom utilisateur: ")
             mot_de_passe = input("indiquer mot de passe: ")
-            gestion.
+            gestion.nouveau_utilisateur(nom_utilisateur, mot_de_passe)
              
         elif choix == '2': 
         
