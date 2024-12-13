@@ -7,8 +7,8 @@ import os
 class utilisateur:
     def __init__(self, fichier_utilisateur = 'utilisateur.csv') :
         self.fichier_utilisateur = fichier_utilisateur
-        
-    
+
+
 
     def creation_compte(self):
         if not os.path.exists(self.fichier_utilisateurs):
@@ -69,16 +69,16 @@ def menu():
             mot_de_passe = input("indiquer mot de passe: ")
             gestion.nouveau_utilisateur(nom_utilisateur, mot_de_passe)
              
-        elif choix == '2': 
+        #elif choix == '2': 
         
-        elif choix == '3':
+        #elif choix == '3':
             
         
-        elif choix == '4':
+        #elif choix == '4':
         
-        elif choix == '5':
-            print("Exit")
-            break
+        #elif choix == '5':
+           # print("Exit")
+            #break
 
         else:
             print("Numero non referencier")
