@@ -130,7 +130,7 @@ def menu_interactif():
             
             else:
                 print("Valeur incorrecte → Exit")
-                break
+                
         
         elif choix == '3':
             recherche = input("Produit à rechercher : ")
