@@ -13,7 +13,7 @@ class utilisateur:
 
 
 
-    def creation_compte(self, fichier_utilisateur):
+    def creation_compte(self):
         if not os.path.exists(self.fichier_utilisateur):
 
             with open(self.fichier_utilisateur, 'w', newline='') as fichier:
@@ -21,9 +21,9 @@ class utilisateur:
                 writer.writerow(['nom_utilisateur', 'mot_de_passe', 'grade'])
 
  # Verification utilisateur
-    def verification_utilisateur(nom_utilisateur, fichier_utilisateur):
+    def verification_utilisateur(self,nom_utilisateur):
         with open(self.fichier_utilisateur, 'r') as fichier:
-            lecture = csv.Dialect(fichier)
+            lecture = csv.DictReader(fichier)
             return any(ligne['nom_utilisateur'] == nom_utilisateur for ligne in lecture)
 
 
@@ -39,16 +39,22 @@ class utilisateur:
             mot_de_passe = sel + mot_de_passe.encode()
             hachage = hashlib.sha256(mot_de_passe).hexdigest()
             hachage = base64.b64encode(sel).decode()
+            mot_de_passe = f"{hachage}"
             
             
             writer = csv.writer(fichier)
-            writer.writerow(nom_utilisateur, mot_de_passe)
+            writer.writerow([nom_utilisateur, mot_de_passe])
 
 
 
         print(f"Utilisateur {nom_utilisateur} à bien été ajoute")
         return True
     
+    def connexion():
+        # Rentrer donne utilisateur
+        
+        # Verification bon user
+        # Donner accès
     
         
 
@@ -79,14 +85,16 @@ def menu():
             mot_de_passe = input("indiquer mot de passe: ")
 
         
-        #elif choix == '3':
+        elif choix == '3':
+            print("Fonctionnalite en dev")
             
         
-        #elif choix == '4':
+        elif choix == '4':
+            print("Fonctionnalite en dev")
         
-        #elif choix == '5':
-           # print("Exit")
-            #break
+        elif choix == '5':
+            print("Exit")
+            break
 
         else:
             print("Numero non referencier")
