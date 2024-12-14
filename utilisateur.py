@@ -1,6 +1,7 @@
 import csv
 import os
 import hashlib
+import base64
 
 
 
@@ -33,10 +34,24 @@ class utilisateur:
             return False
     
         with open(self.fichier_utilisateur, 'a') as fichier:
+           # Hash mdp
+            sel = os.urandom(16)
+            mot_de_passe = sel + mot_de_passe.encode()
+            hachage = hashlib.sha256(mot_de_passe).hexdigest()
+            hachage = base64.b64encode(sel).decode()
+            
+            
             writer = csv.writer(fichier)
             writer.writerow(nom_utilisateur, mot_de_passe)
+
+
+
         print(f"Utilisateur {nom_utilisateur} à bien été ajoute")
         return True
+    
+    
+        
+
 
   
      
@@ -62,7 +77,7 @@ def menu():
         elif choix == '2':
             nom_utilisateur = input("Indiquer nom utilisateur: ")
             mot_de_passe = input("indiquer mot de passe: ")
-            
+
         
         #elif choix == '3':
             
