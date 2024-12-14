@@ -1,5 +1,6 @@
 import csv
 import os
+import hashlib
 
 
 
@@ -7,48 +8,37 @@ import os
 class utilisateur:
     def __init__(self, fichier_utilisateur = 'utilisateur.csv') :
         self.fichier_utilisateur = fichier_utilisateur
+        self.creation_compte()
 
 
 
-    def creation_compte(self):
-        if not os.path.exists(self.fichier_utilisateurs):
+    def creation_compte(self, fichier_utilisateur):
+        if not os.path.exists(self.fichier_utilisateur):
 
-            with open(self.fichier_utilisateurs, 'w', newline='') as fichier:
+            with open(self.fichier_utilisateur, 'w', newline='') as fichier:
                 writer = csv.writer(fichier)
                 writer.writerow(['nom_utilisateur', 'mot_de_passe', 'grade'])
 
-# Verification utilisateur
-    def verification_utilisateur():
+ # Verification utilisateur
+    def verification_utilisateur(nom_utilisateur, fichier_utilisateur):
         with open(self.fichier_utilisateur, 'r') as fichier:
             lecture = csv.Dialect(fichier)
             return any(ligne['nom_utilisateur'] == nom_utilisateur for ligne in lecture)
 
 
-# Creation d'un utilisateur
-    def nouveau_utlisateur():
+ # Creation d'un utilisateur
+    def nouveau_utlisateur(self, nom_utilisateur, mot_de_passe, role='utilisateur'):
         if self.verification_utilisateur(nom_utilisateur):
             print("Nom utilisateur deja reserve")
+            return False
     
         with open(self.fichier_utilisateur, 'a') as fichier:
             writer = csv.writer(fichier)
-            writer.writerow(['nom_utilisateur', 'mot_de_passe', 'grade'])
+            writer.writerow(nom_utilisateur, mot_de_passe)
+        print(f"Utilisateur {nom_utilisateur} à bien été ajoute")
+        return True
 
-            for ligne in ligne : 
-                if ligne['nom_utilisateur'] == nom_utilisateur :
-                    if ligne['mot_de_passe'] == mot_de_passe :
-                        
-
-
-    def nom_utilisateur():
-    
-    
-    def mot_de_passe():
-        
-     
-     
-     
-     
-     
+  
      
      
 def menu():
@@ -62,14 +52,17 @@ def menu():
         print("4 - Supprimer le compte")
         print("5 - Exit")
 
-        choix = int("Choisir un numero: ")
+        choix = input("Choisir un numero: ")
 
         if choix == '1':
             nom_utilisateur = input("Indiquer nom utilisateur: ")
             mot_de_passe = input("indiquer mot de passe: ")
-            gestion.nouveau_utilisateur(nom_utilisateur, mot_de_passe)
+            gestion.nouveau_utlisateur(nom_utilisateur, mot_de_passe)
              
-        #elif choix == '2': 
+        elif choix == '2':
+            nom_utilisateur = input("Indiquer nom utilisateur: ")
+            mot_de_passe = input("indiquer mot de passe: ")
+            
         
         #elif choix == '3':
             
