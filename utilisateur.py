@@ -2,6 +2,7 @@ import csv
 import os
 import hashlib
 import base64
+import pandas as pd
 
 
 
@@ -50,7 +51,40 @@ class utilisateur:
         print(f"Utilisateur {nom_utilisateur} à bien été ajoute")
         return True
     
-    def connexion():
+    def changement_mdp(self, nom_utilisateur, A_mot_de_passe, N_mot_de_passe):
+        ligne = []
+        utilisateur_trouve = False
+
+        with open(self.fichier_utilisateur, 'r') as fichier: 
+            lecture = csv.DictReader(fichier)
+            ligne = list(lecture)
+
+        for ligne in ligne:
+            if ligne['nom_utilisateur'] == nom_utilisateur:
+                if ligne['mot_de_passe'] == self.hashage_mdp(A_mot_de_passe):
+                    ligne['mot_de_passe_hash'] = self.hashage_mdp(N_mot_de_passe)
+                    utilisateur_trouve = True
+                    break
+
+        if utilisateur_trouve:
+            with open(self.fichier_utilisateur, 'w', newline='') as fichier:
+                writer = csv.DictWriter(fichier, nouveau=['nom_utilisateur', 'mot_de_passe_hash', 'role'])
+                writer.writeheader()
+                writer.writerow(ligne)
+            print("Password bien modifie")
+            return True
+        else:
+            print("Password Non change")
+            return False
+
+    def hashage_mdp(sel, mot_de_passe): 
+        sel = os.urandom(16)
+        mot_de_passe = sel + mot_de_passe.encode()
+        hachage = hashlib.sha256(mot_de_passe).hexdigest()
+        hachage = base64.b64encode(sel).decode()
+        mot_de_passe = f"{hachage}"
+    
+    #def connexion():
         # Rentrer donne utilisateur
         
         # Verification bon user
@@ -83,10 +117,18 @@ def menu():
         elif choix == '2':
             nom_utilisateur = input("Indiquer nom utilisateur: ")
             mot_de_passe = input("indiquer mot de passe: ")
+            role = gestion.verification_utilisateur(nom_utilisateur, mot_de_passe)
+
+            if role :
+                print(f"Connexion reussite {role}")
+            else:
+                print("connexion echoue")
 
         
         elif choix == '3':
-            print("Fonctionnalite en dev")
+            nom_utilisateur = input("Indiquer nom utilisateur: ")
+            mot_de_passe = input("indiquer mot de passe: ")
+            gestion.changement_mdp(nom_utilisateur, mot_de_passe)
             
         
         elif choix == '4':
