@@ -158,7 +158,7 @@ def menu():
         elif choix == '2':
             nom_utilisateur = input("Indiquer nom utilisateur: ")
             mot_de_passe = input("indiquer mot de passe: ")
-            role = gestion.connexion(nom_utilisateur, mot_de_passe, h)
+            role = gestion.connexion(nom_utilisateur, mot_de_passe)
 
             if role :
                 print(f"Connexion reussite {role}")
@@ -176,7 +176,7 @@ def menu():
             nom_utilisateur = input("Indiquer nom utilisateur: ")
             mot_de_passe = input("indiquer mot de passe: ")
 
-            if gestion.verification_utilisateur(nom_utilisateur, mot_de_passe, hash_stock):
+            if gestion.verification_utilisateur(nom_utilisateur, mot_de_passe):
                 gestion.sup_utilisateur(nom_utilisateur)
                 print("Utilisateur Supprimer")
             else:
