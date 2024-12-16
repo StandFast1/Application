@@ -1,4 +1,5 @@
-import os, time 
+import os
+from utilisateur import Utilisateur
 
 # Fonction principale :
 def gestion():
@@ -20,10 +21,10 @@ class Produit:
 # Lecture produits dans les fichiers
 def lecture_produits(fichier):
     produits = []
-    if os.path.exists(fichier): # Vérification existence fichier
-        with open(fichier, 'r') as f: # Ouvrir et fermer les fichiers
-            for ligne in f: # Parcours ligne par ligne
-                parts = ligne.strip().split(',') # Suppression espace
+    if os.path.exists(fichier): 
+        with open(fichier, 'r') as f:
+            for ligne in f: 
+                parts = ligne.strip().split(',') 
                 if len(parts) == 4:
                     produits.append(Produit(parts[0], parts[1], parts[2], parts[3])) # Vérification 4 valeurs
     return produits
@@ -159,7 +160,46 @@ def menu_interactif():
         else:
             print("Valeur non valide, veuillez recommencer")
 
+def main():
+    gestion_utilisateurs = Utilisateur()
+    
+    while True:
+        print("\n=== Menu Principal ===")
+        print("1 - Se connecter")
+        print("2 - Créer un compte")
+        print("3 - Quitter")
+        
+        choix = input("Choix : ")
+        
+        if choix == '1':
+            nom = input("Nom d'utilisateur : ")
+            mdp = input("Mot de passe : ")
+            role = gestion_utilisateurs.connexion(nom, mdp)
+            
+            if role:
+                print(f"Connexion réussie! Rôle : {role}")
+                menu_interactif()  
+            else:
+                print("Connexion échouée")
+                
+        elif choix == '2':
+            nom = input("Nom d'utilisateur : ")
+            mdp = input("Mot de passe : ")
+            
+            if gestion_utilisateurs.verif_mot_de_passe_compromis(mdp):
+                print("\nCe mot de passe est compromis!")
+                continue
+            
+            gestion_utilisateurs.nouveau_utilisateur(nom, mdp)
+            
+        elif choix == '3':
+            print("Au revoir!")
+            break
+            
+        else:
+            print("Option invalide")
+
 if __name__ == "__main__":
-    menu_interactif()
+    main()
 
     

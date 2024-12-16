@@ -2,8 +2,7 @@ import csv
 import os
 import hashlib
 import base64
-
-
+import zipfile
 
 
 # Class Utilisateur 
@@ -127,26 +126,18 @@ class Utilisateur:
             print("Utilisateur non trouvé.")
             return False
         
-    def verif_mot_de_passe_compromis(self, mot_de_passe, fichier_rockyou='rockyou.txt'):
-    
+    def verif_mot_de_passe_compromis(self, mot_de_passe, fichier_zip='rockyou.zip'):
         try:
-            with open(fichier_rockyou, 'r', encoding='utf-8', errors='ignore') as f:
-                return mot_de_passe in (ligne.strip() for ligne in f)
+            with zipfile.ZipFile(fichier_zip) as myzip:
+                with myzip.open('rockyou.txt', encoding='utf-8', errors='ignore') as f:
+                    return mot_de_passe in (ligne.strip().decode('utf-8', errors='ignore') for ligne in f)
         except FileNotFoundError:
-            print("Attention: fichier rockyou.txt non trouvé")
+            print("Attention: fichier rockyou.zip non trouvé")
             return False
         except Exception as e:
             print(f"Erreur lors de la vérification du mot de passe: {e}")
             return False
 
-        
-
-
-    
-        
-
-
-  
      
      
 def menu():
