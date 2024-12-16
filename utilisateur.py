@@ -74,7 +74,7 @@ class Utilisateur:
             return False
 
 # === Hashage MDP ===
-    def hashage_mdp(sel, mot_de_passe): 
+    def hashage_mdp(sel, mot_de_passe):
         sel = os.urandom(16)
         mot_de_passe = sel + mot_de_passe.encode()
         hachage = hashlib.sha256(mot_de_passe).hexdigest()
@@ -99,12 +99,11 @@ class Utilisateur:
                 lecteur = csv.DictReader(fichier)
                 for ligne in lecteur:
                     if ligne['nom_utilisateur'] == nom_utilisateur:
-                        print(f"Vérification du mot de passe pour {nom_utilisateur}")  # Debug
-                        print(f"Hash stocké: {ligne['mot_de_passe']}")  # Debug
+                        print(f"Vérification du mot de passe pour {nom_utilisateur}")   
                         if self.verification_mdp(mot_de_passe, ligne['mot_de_passe']):
                             return ligne.get('role', 'utilisateur')
         except Exception as e:
-            print(f"Erreur lors de la connexion: {e}")  # Debug
+            print(f"Erreur lors de la connexion: {e}")  
         return None
     
 # === Supression Utilisateur ===
@@ -126,6 +125,18 @@ class Utilisateur:
             return True
         else:
             print("Utilisateur non trouvé.")
+            return False
+        
+    def verif_mot_de_passe_compromis(self, mot_de_passe, fichier_rockyou='rockyou.txt'):
+    
+        try:
+            with open(fichier_rockyou, 'r', encoding='utf-8', errors='ignore') as f:
+                return mot_de_passe in (ligne.strip() for ligne in f)
+        except FileNotFoundError:
+            print("Attention: fichier rockyou.txt non trouvé")
+            return False
+        except Exception as e:
+            print(f"Erreur lors de la vérification du mot de passe: {e}")
             return False
 
         
@@ -155,6 +166,13 @@ def menu():
             nom_utilisateur = input("Indiquer nom utilisateur: ")
             mot_de_passe = input("indiquer mot de passe: ")
             gestion.nouveau_utilisateur(nom_utilisateur, mot_de_passe)
+
+            if gestion.verif_mot_de_passe_compromis(mot_de_passe):
+                    print("Mot de passe compromis")
+                    continue
+                
+            if gestion.nouveau_utilisateur(nom_utilisateur, mot_de_passe):
+                break
              
         elif choix == '2':
             nom_utilisateur = input("Indiquer nom utilisateur: ")
