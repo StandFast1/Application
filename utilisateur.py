@@ -16,10 +16,9 @@ class Utilisateur:
 
     def creation_compte(self):
         if not os.path.exists(self.fichier_utilisateur):
-
             with open(self.fichier_utilisateur, 'w', newline='') as fichier:
                 writer = csv.writer(fichier)
-                writer.writerow(['nom_utilisateur', 'mot_de_passe', 'grade'])
+                writer.writerow(['nom_utilisateur', 'mot_de_passe', 'role'])
 
  # Verification utilisateur
     def verification_utilisateur(self,nom_utilisateur):
@@ -29,26 +28,23 @@ class Utilisateur:
 
 
  # Creation d'un utilisateur
-    def nouveau_utlisateur(self, nom_utilisateur, mot_de_passe, role='utilisateur'):
+    def nouveau_utilisateur(self, nom_utilisateur, mot_de_passe, role='utilisateur'):
         if self.verification_utilisateur(nom_utilisateur):
-            print("Nom utilisateur deja reserve")
+            print("Nom utilisateur déjà réservé")
             return False
     
-        with open(self.fichier_utilisateur, 'a') as fichier:
-           # Hash mdp
+        with open(self.fichier_utilisateur, 'a', newline='') as fichier:
+        # Hash mdp
             sel = os.urandom(16)
-            mot_de_passe = sel + mot_de_passe.encode()
-            hachage = hashlib.sha256(mot_de_passe).hexdigest()
-            hachage = base64.b64encode(sel).decode()
-            mot_de_passe = f"{hachage}"
-            
-            
+            mot_de_passe_sale = sel + mot_de_passe.encode()
+            hachage = hashlib.sha256(mot_de_passe_sale).hexdigest()
+            sel_encode = base64.b64encode(sel).decode()
+            mot_de_passe_final = f"{sel_encode}${hachage}"  # Format correct sel$hash
+        
             writer = csv.writer(fichier)
-            writer.writerow([nom_utilisateur, mot_de_passe])
+            writer.writerow([nom_utilisateur, mot_de_passe_final, role])
 
-
-
-        print(f"Utilisateur {nom_utilisateur} à bien été ajoute")
+        print(f"Utilisateur {nom_utilisateur} a bien été ajouté")
         return True
     
 # === Changement MDP ===
@@ -86,9 +82,9 @@ class Utilisateur:
         mot_de_passe = f"{hachage}"
 
 # === Verification MDP ===
-    def verification_mdp(self, mot_de_passe, hash_stock):
+    def verification_mdp(self, mot_de_passe, hash_stocke):
         try:
-            sel_encode, hash_original = hash_stock.split('$')
+            sel_encode, hash_original = hash_stocke.split('$')
             sel = base64.b64decode(sel_encode)
             mot_de_passe_sale = sel + mot_de_passe.encode()
             nouveau_hash = hashlib.sha256(mot_de_passe_sale).hexdigest()
@@ -98,12 +94,17 @@ class Utilisateur:
         
 # === Connexion a un compte existant ===
     def connexion(self, nom_utilisateur, mot_de_passe):
-        with open(self.fichier_utilisateur, 'r') as fichier:
-            lecteur = csv.DictReader(fichier)
-            for ligne in lecteur:
-                if ligne['nom_utilisateur'] == nom_utilisateur:
-                    if self.verifier_mot_de_passe(mot_de_passe, ligne['mot_de_passe']):
-                        return ligne['role']
+        try:
+            with open(self.fichier_utilisateur, 'r') as fichier:
+                lecteur = csv.DictReader(fichier)
+                for ligne in lecteur:
+                    if ligne['nom_utilisateur'] == nom_utilisateur:
+                        print(f"Vérification du mot de passe pour {nom_utilisateur}")  # Debug
+                        print(f"Hash stocké: {ligne['mot_de_passe']}")  # Debug
+                        if self.verification_mdp(mot_de_passe, ligne['mot_de_passe']):
+                            return ligne.get('role', 'utilisateur')
+        except Exception as e:
+            print(f"Erreur lors de la connexion: {e}")  # Debug
         return None
     
 # === Supression Utilisateur ===
@@ -153,7 +154,7 @@ def menu():
         if choix == '1':
             nom_utilisateur = input("Indiquer nom utilisateur: ")
             mot_de_passe = input("indiquer mot de passe: ")
-            gestion.nouveau_utlisateur(nom_utilisateur, mot_de_passe)
+            gestion.nouveau_utilisateur(nom_utilisateur, mot_de_passe)
              
         elif choix == '2':
             nom_utilisateur = input("Indiquer nom utilisateur: ")
