@@ -164,10 +164,10 @@ def main():
     gestion_utilisateurs = Utilisateur()
     
     while True:
-        print("\n Menu Principal ")
+        print("\n=== Menu Principal ===")
         print("1 - Se connecter")
         print("2 - Créer un compte")
-        print("3 - Changer de password")
+        print("3 - Changer de mot de passe")
         print("4 - Supprimer le compte")
         print("5 - Quitter")
         
@@ -180,42 +180,51 @@ def main():
             
             if role:
                 print(f"Connexion réussie! Rôle : {role}")
-                menu_interactif()  
+                menu_interactif()  # Accès au menu produits
             else:
                 print("Connexion échouée")
                 
         elif choix == '2':
-            nom = input("Nom d'utilisateur : ")
-            mdp = input("Mot de passe : ")
-            
-            if gestion_utilisateurs.verif_mot_de_passe_compromis(mdp):
-                print("\nCe mot de passe est compromis!")
-                continue
-            
-            gestion_utilisateurs.nouveau_utilisateur(nom, mdp)
-            
+            while True:
+                nom = input("Nom d'utilisateur : ")
+                mdp = input("Mot de passe : ")
+                
+                if gestion_utilisateurs.verif_mot_de_passe_compromis(mdp):
+                    print("\nCe mot de passe est compromis!")
+                    continue
+                
+                if gestion_utilisateurs.nouveau_utilisateur(nom, mdp):
+                    break
+                
         elif choix == '3':
             nom = input("Nom d'utilisateur : ")
             ancien_mdp = input("Ancien mot de passe : ")
             nouveau_mdp = input("Nouveau mot de passe : ")
+            
+            if gestion_utilisateurs.verif_mot_de_passe_compromis(nouveau_mdp):
+                print("\nLe nouveau mot de passe est compromis!")
+                continue
+                
             gestion_utilisateurs.changement_mdp(nom, ancien_mdp, nouveau_mdp)
 
         elif choix == '4':
             nom = input("Nom d'utilisateur : ")
             mdp = input("Mot de passe : ")
-            if gestion_utilisateurs.connexion(nom, mdp):  
+            
+            if gestion_utilisateurs.connexion(nom, mdp):
                 gestion_utilisateurs.sup_utilisateur(nom)
             else:
                 print("Identifiants incorrects")
             
         elif choix == '5':
             print("Au revoir!")
-            breakk
+            break
             
         else:
             print("Option invalide")
 
 if __name__ == "__main__":
     main()
+
 
     

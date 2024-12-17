@@ -7,7 +7,7 @@ import zipfile
 
 # Class Utilisateur 
 class Utilisateur:
-    def __init__(self, fichier_utilisateur = 'utilisateur.csv') :
+    def __init__(self, fichier_utilisateur='utilisateur.csv'):
         self.fichier_utilisateur = fichier_utilisateur
         self.creation_compte()
 
@@ -48,37 +48,38 @@ class Utilisateur:
     
 # === Changement MDP ===
     def changement_mdp(self, nom_utilisateur, A_mot_de_passe, N_mot_de_passe):
-        utilisateur = []
+        utilisateurs = []
         utilisateur_trouve = False
 
-        with open(self.fichier_utilisateur, 'r') as fichier: 
+        with open(self.fichier_utilisateur, 'r') as fichier:
             lecture = csv.DictReader(fichier)
+            utilisateurs = list(lecture)
 
-            for ligne in lecture:
-                if ligne['nom_utilisateur'] == nom_utilisateur:
-                    if self.verification_mdp(A_mot_de_passe, ligne['mot_de_passe']):
-                        ligne['mot_de_passe'] = self.hashage_mdp(N_mot_de_passe)
-                        utilisateur_trouve = True
-                        break
+        for utilisateur in utilisateurs:
+            if utilisateur['nom_utilisateur'] == nom_utilisateur:
+                if self.verification_mdp(A_mot_de_passe, utilisateur['mot_de_passe']):
+                    utilisateur['mot_de_passe'] = self.hashage_mdp(N_mot_de_passe)
+                    utilisateur_trouve = True
+                    break
 
         if utilisateur_trouve:
             with open(self.fichier_utilisateur, 'w', newline='') as fichier:
-                writer = csv.DictWriter(fichier, fieldnames=['nom_utilisateur', 'mot_de_passe_hash', 'role'])
+                writer = csv.DictWriter(fichier, fieldnames=['nom_utilisateur', 'mot_de_passe', 'role'])
                 writer.writeheader()
-                writer.writerow(utilisateur)
-            print("Password bien modifie")
+                writer.writerows(utilisateurs)
+            print("Mot de passe modifié avec succès")
             return True
         else:
-            print("Password Non change")
+            print("Modification du mot de passe échouée")
             return False
 
 # === Hashage MDP ===
-    def hashage_mdp(sel, mot_de_passe):
+    def hashage_mdp(self, mot_de_passe):
         sel = os.urandom(16)
-        mot_de_passe = sel + mot_de_passe.encode()
-        hachage = hashlib.sha256(mot_de_passe).hexdigest()
-        hachage = base64.b64encode(sel).decode()
-        mot_de_passe = f"{hachage}"
+        mot_de_passe_sale = sel + mot_de_passe.encode()
+        hachage = hashlib.sha256(mot_de_passe_sale).hexdigest()
+        sel_encode = base64.b64encode(sel).decode()
+        return f"{sel_encode}${hachage}"
 
 # === Verification MDP ===
     def verification_mdp(self, mot_de_passe, hash_stocke):
@@ -117,7 +118,7 @@ class Utilisateur:
 
         if utilisateur_trouve:
             with open(self.fichier_utilisateur, 'w', newline='') as fichier:
-                writer = csv.DictWriter(fichier, fieldnames=['nom_utilisateur', 'mot_de_passe_hash', 'role'])
+                writer = csv.DictWriter(fichier, fieldnames=['nom_utilisateur', 'mot_de_passe', 'role'])
                 writer.writeheader()
                 writer.writerows(lignes)
             print(f"Utilisateur {nom_utilisateur} supprimé avec succès.")
