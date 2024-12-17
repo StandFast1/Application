@@ -164,10 +164,12 @@ def main():
     gestion_utilisateurs = Utilisateur()
     
     while True:
-        print("\n=== Menu Principal ===")
+        print("\n Menu Principal ")
         print("1 - Se connecter")
         print("2 - Créer un compte")
-        print("3 - Quitter")
+        print("3 - Changer de password")
+        print("4 - Supprimer le compte")
+        print("5 - Quitter")
         
         choix = input("Choix : ")
         
@@ -193,8 +195,22 @@ def main():
             gestion_utilisateurs.nouveau_utilisateur(nom, mdp)
             
         elif choix == '3':
+            nom = input("Nom d'utilisateur : ")
+            ancien_mdp = input("Ancien mot de passe : ")
+            nouveau_mdp = input("Nouveau mot de passe : ")
+            gestion_utilisateurs.changement_mdp(nom, ancien_mdp, nouveau_mdp)
+
+        elif choix == '4':
+            nom = input("Nom d'utilisateur : ")
+            mdp = input("Mot de passe : ")
+            if gestion_utilisateurs.connexion(nom, mdp):  
+                gestion_utilisateurs.sup_utilisateur(nom)
+            else:
+                print("Identifiants incorrects")
+            
+        elif choix == '5':
             print("Au revoir!")
-            break
+            breakk
             
         else:
             print("Option invalide")
