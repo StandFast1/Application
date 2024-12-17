@@ -189,7 +189,7 @@ def main():
             
             if role:
                 print(f"Connexion réussie! Rôle : {role}")
-                menu_interactif()  # Accès au menu produits
+                menu_interactif()  
             else:
                 print("Connexion échouée")
                 
