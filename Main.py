@@ -1,9 +1,10 @@
 import os
 from utilisateur import Utilisateur
+import pandas as pd
 
 # Fonction principale :
 def gestion():
-    fichier = 'produits.txt'
+    fichier = 'produits.csv'
     produits = lecture_produits(fichier)
 
 # Classe Produit 
@@ -21,12 +22,10 @@ class Produit:
 # Lecture produits dans les fichiers
 def lecture_produits(fichier):
     produits = []
-    if os.path.exists(fichier): 
-        with open(fichier, 'r') as f:
-            for ligne in f: 
-                parts = ligne.strip().split(',') 
-                if len(parts) == 4:
-                    produits.append(Produit(parts[0], parts[1], parts[2], parts[3])) # Vérification 4 valeurs
+    if os.path.exists(fichier):
+        df = pd.read_csv(fichier)
+        for _, row in df.iterrows():
+            produits.append(Produit(row['nom'], row['prix'], row['quantite'], row['disponible']))
     return produits
 
 # Tri normal
@@ -75,18 +74,28 @@ def rechercher_produit(produits, nom):
 
 # Ajouter des produits
 def ajouter_produits(fichier, produit):
-    with open(fichier, 'a') as f:  # 'a' permet de si fichier déjà créé modifier la valeur 
-        f.write(f"{produit.nom},{produit.prix},{produit.quantite},{produit.disponible}\n")
+    import pandas as pd
+    nouveau_produit = pd.DataFrame({
+        'nom': [produit.nom],
+        'prix': [produit.prix],
+        'quantite': [produit.quantite],
+        'disponible': [produit.disponible]
+    })
+    
+    if os.path.exists(fichier):
+        df = pd.read_csv(fichier)
+        df = pd.concat([df, nouveau_produit])
+    else:
+        df = nouveau_produit
+    
+    df.to_csv(fichier, index=False)
 
 # Supprimer produit
 def supprim_produit(fichier, produits, nom_produit):
-    produits = [p for p in produits if p.nom.lower() != nom_produit.lower()]
-    
-    with open(fichier, 'w') as f:
-        for produit in produits:
-            f.write(f"{produit.nom},{produit.prix},{produit.quantite},{produit.disponible}\n")
-    
-    return produits
+    df = pd.DataFrame([{'nom': p.nom, 'prix': p.prix, 'quantite': p.quantite, 'disponible': p.disponible} 
+                      for p in produits if p.nom.lower() != nom_produit.lower()])
+    df.to_csv(fichier, index=False)
+    return [p for p in produits if p.nom.lower() != nom_produit.lower()]
 
 # Afficher liste produit
 def afficher_produits(produits):
