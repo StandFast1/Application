@@ -129,11 +129,23 @@ class Utilisateur:
         
     def verif_mot_de_passe_compromis(self, mot_de_passe, fichier_zip='rockyou.zip'):
         try:
-            with zipfile.ZipFile(fichier_zip) as myzip:
-                with myzip.open('rockyou.txt', encoding='utf-8', errors='ignore') as f:
-                    return mot_de_passe in (ligne.strip().decode('utf-8', errors='ignore') for ligne in f)
+            with zipfile.ZipFile(fichier_zip, 'r') as myzip:
+            
+                print(f"Contenu du zip : {myzip.namelist()}")
+            
+            
+                fichier_txt = myzip.namelist()[0]  # Prendre le premier fichier
+            
+                with myzip.open(fichier_txt) as f:
+                    for ligne in f:
+                        try:
+                            if mot_de_passe == ligne.decode('utf-8', errors='ignore').strip():
+                                return True
+                        except UnicodeDecodeError:
+                            continue
+            return False
         except FileNotFoundError:
-            print("Attention: fichier rockyou.zip non trouvé")
+            print(f"Attention: fichier {fichier_zip} non trouvé")
             return False
         except Exception as e:
             print(f"Erreur lors de la vérification du mot de passe: {e}")
