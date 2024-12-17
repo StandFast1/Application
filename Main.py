@@ -164,7 +164,7 @@ def main():
     gestion_utilisateurs = Utilisateur()
     
     while True:
-        print("\n=== Menu Principal ===")
+        print("\n Menu Principal ")
         print("1 - Se connecter")
         print("2 - Créer un compte")
         print("3 - Changer de mot de passe")

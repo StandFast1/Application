@@ -46,7 +46,7 @@ class Utilisateur:
         print(f"Utilisateur {nom_utilisateur} a bien été ajouté")
         return True
     
-# === Changement MDP ===
+#     Changement MDP  
     def changement_mdp(self, nom_utilisateur, A_mot_de_passe, N_mot_de_passe):
         utilisateurs = []
         utilisateur_trouve = False
@@ -73,7 +73,7 @@ class Utilisateur:
             print("Modification du mot de passe échouée")
             return False
 
-# === Hashage MDP ===
+#     Hashage MDP  
     def hashage_mdp(self, mot_de_passe):
         sel = os.urandom(16)
         mot_de_passe_sale = sel + mot_de_passe.encode()
@@ -81,7 +81,7 @@ class Utilisateur:
         sel_encode = base64.b64encode(sel).decode()
         return f"{sel_encode}${hachage}"
 
-# === Verification MDP ===
+#    Verification MDP  
     def verification_mdp(self, mot_de_passe, hash_stocke):
         try:
             sel_encode, hash_original = hash_stocke.split('$')
@@ -92,7 +92,7 @@ class Utilisateur:
         except:
             return False
         
-# === Connexion a un compte existant ===
+#     Connexion a un compte existant 
     def connexion(self, nom_utilisateur, mot_de_passe):
         try:
             with open(self.fichier_utilisateur, 'r') as fichier:
@@ -106,7 +106,7 @@ class Utilisateur:
             print(f"Erreur lors de la connexion: {e}")  
         return None
     
-# === Supression Utilisateur ===
+#    Supression Utilisateur 
     def sup_utilisateur(self, nom_utilisateur):
         lignes = []
         utilisateur_trouve = False
@@ -134,7 +134,7 @@ class Utilisateur:
                 print(f"Contenu du zip : {myzip.namelist()}")
             
             
-                fichier_txt = myzip.namelist()[0]  # Prendre le premier fichier
+                fichier_txt = myzip.namelist()[0]  
             
                 with myzip.open(fichier_txt) as f:
                     for ligne in f:
