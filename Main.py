@@ -1,17 +1,22 @@
-import os, time 
+import os
+from utilisateur import Utilisateur
+import pandas as pd
 
 # Fonction principale :
 def gestion():
-    fichier = 'produits.txt'
+    fichier = 'produits.csv'
+    if not os.path.exists(fichier):
+        df = pd.DataFrame(columns=['nom', 'prix', 'quantite', 'disponible'])
+        df.to_csv(fichier, index=False)
     produits = lecture_produits(fichier)
 
 # Classe Produit 
 class Produit:
     def __init__(self, nom, prix, quantite, disponible=True):
         self.nom = nom
-        self.prix = float(prix)          
+        self.prix = float(prix)
         self.quantite = int(quantite)
-        self.disponible = disponible     
+        self.disponible = disponible
 
     def __str__(self):
         return f"Produit: {self.nom}, Prix: {self.prix}€, Quantite: {self.quantite}, Disponible: {self.disponible}"  # Indication par produit
@@ -20,12 +25,18 @@ class Produit:
 # Lecture produits dans les fichiers
 def lecture_produits(fichier):
     produits = []
-    if os.path.exists(fichier): # Vérification existence fichier
-        with open(fichier, 'r') as f: # Ouvrir et fermer les fichiers
-            for ligne in f: # Parcours ligne par ligne
-                parts = ligne.strip().split(',') # Suppression espace
-                if len(parts) == 4:
-                    produits.append(Produit(parts[0], parts[1], parts[2], parts[3])) # Vérification 4 valeurs
+    if os.path.exists(fichier):
+        try:
+            df = pd.read_csv(fichier)
+            for _, row in df.iterrows():
+                produits.append(Produit(
+                    str(row['nom']),
+                    float(row['prix']),
+                    int(row['quantite']),
+                    bool(row['disponible'])
+                ))
+        except Exception as e:
+            print(f"Erreur de lecture du fichier : {e}")
     return produits
 
 # Tri normal
@@ -74,18 +85,29 @@ def rechercher_produit(produits, nom):
 
 # Ajouter des produits
 def ajouter_produits(fichier, produit):
-    with open(fichier, 'a') as f:  # 'a' permet de si fichier déjà créé modifier la valeur 
-        f.write(f"{produit.nom},{produit.prix},{produit.quantite},{produit.disponible}\n")
+    nouveau_produit = pd.DataFrame({
+        'nom': [produit.nom],
+        'prix': [produit.prix],
+        'quantite': [produit.quantite],
+        'disponible': [produit.disponible]
+    })
+    
+    if os.path.exists(fichier):
+        df = pd.read_csv(fichier)
+        df = pd.concat([df, nouveau_produit])
+    else:
+        df = nouveau_produit
+    
+    df.to_csv(fichier, index=False)
+    print("Produit ajouté dans votre réserve")
+
 
 # Supprimer produit
 def supprim_produit(fichier, produits, nom_produit):
-    produits = [p for p in produits if p.nom.lower() != nom_produit.lower()]
-    
-    with open(fichier, 'w') as f:
-        for produit in produits:
-            f.write(f"{produit.nom},{produit.prix},{produit.quantite},{produit.disponible}\n")
-    
-    return produits
+    df = pd.DataFrame([{'nom': p.nom, 'prix': p.prix, 'quantite': p.quantite, 'disponible': p.disponible} 
+                      for p in produits if p.nom.lower() != nom_produit.lower()])
+    df.to_csv(fichier, index=False)
+    return [p for p in produits if p.nom.lower() != nom_produit.lower()]
 
 # Afficher liste produit
 def afficher_produits(produits):
@@ -97,7 +119,7 @@ def afficher_produits(produits):
 
 # Menu interactif 
 def menu_interactif():
-    fichier = 'produits.txt'
+    fichier = 'produits.csv'
     produits = lecture_produits(fichier)
     
     while True : 
@@ -111,7 +133,7 @@ def menu_interactif():
 
         choix = input("Choisir : ")
 
-        if choix == '1':
+        if choix == '1': 
             afficher_produits(produits)
         
         elif choix == '2':
@@ -130,7 +152,7 @@ def menu_interactif():
             
             else:
                 print("Valeur incorrecte → Exit")
-                break
+                
         
         elif choix == '3':
             recherche = input("Produit à rechercher : ")
@@ -148,7 +170,7 @@ def menu_interactif():
             print("Produit ajouté dans votre réserve")
 
         elif choix == '5':
-            nom_produit = input("Nom du produit à supprimer : ")
+            nom_produit = input("Nom du produit à supprimer (ecrire en toute lettre): ")
             produits = supprim_produit(fichier, produits, nom_produit)
             print(f"Produit {nom_produit} supprimé")
 
@@ -159,7 +181,71 @@ def menu_interactif():
         else:
             print("Valeur non valide, veuillez recommencer")
 
-if __name__ == "__main__":
-    menu_interactif()
+def main():
+    gestion_utilisateurs = Utilisateur()
+    
+    while True:
+        print("\n Menu Principal ")
+        print("1 - Se connecter")
+        print("2 - Créer un compte")
+        print("3 - Changer de mot de passe")
+        print("4 - Supprimer le compte")
+        print("5 - Quitter")
+        
+        choix = input("Choix : ")
+        
+        if choix == '1':
+            nom = input("Nom d'utilisateur : ")
+            mdp = input("Mot de passe : ")
+            role = gestion_utilisateurs.connexion(nom, mdp)
+            
+            if role:
+                print(f"Connexion réussie au compte {nom} Rôle : {role}")
+                menu_interactif()  
+            else:
+                print("Connexion échouée")
+                
+        elif choix == '2':
+            while True:
+                nom = input("Nom d'utilisateur : ")
+                mdp = input("Mot de passe : ")
+                
+                if gestion_utilisateurs.verif_mot_de_passe_compromis(mdp):
+                    print("\nCe mot de passe est compromis!")
+                    continue
+                
+                if gestion_utilisateurs.nouveau_utilisateur(nom, mdp):
+                    break
+                
+        elif choix == '3':
+            nom = input("Nom d'utilisateur : ")
+            ancien_mdp = input("Ancien mot de passe : ")
+            nouveau_mdp = input("Nouveau mot de passe : ")
+            
+            if gestion_utilisateurs.verif_mot_de_passe_compromis(nouveau_mdp):
+                print("\nLe nouveau mot de passe est compromis!")
+                continue
+                
+            gestion_utilisateurs.changement_mdp(nom, ancien_mdp, nouveau_mdp)
 
-    #test
+        elif choix == '4':
+            nom = input("Nom d'utilisateur : ")
+            mdp = input("Mot de passe : ")
+            
+            if gestion_utilisateurs.connexion(nom, mdp):
+                gestion_utilisateurs.sup_utilisateur(nom)
+            else:
+                print("Identifiants incorrects")
+            
+        elif choix == '5':
+            print("Au revoir!")
+            break
+            
+        else:
+            print("Option invalide")
+
+if __name__ == "__main__":
+    main()
+
+
+    
