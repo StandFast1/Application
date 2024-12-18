@@ -5,15 +5,18 @@ import pandas as pd
 # Fonction principale :
 def gestion():
     fichier = 'produits.csv'
+    if not os.path.exists(fichier):
+        df = pd.DataFrame(columns=['nom', 'prix', 'quantite', 'disponible'])
+        df.to_csv(fichier, index=False)
     produits = lecture_produits(fichier)
 
 # Classe Produit 
 class Produit:
     def __init__(self, nom, prix, quantite, disponible=True):
         self.nom = nom
-        self.prix = float(prix)          
+        self.prix = float(prix)
         self.quantite = int(quantite)
-        self.disponible = disponible     
+        self.disponible = disponible
 
     def __str__(self):
         return f"Produit: {self.nom}, Prix: {self.prix}€, Quantite: {self.quantite}, Disponible: {self.disponible}"  # Indication par produit
@@ -23,9 +26,17 @@ class Produit:
 def lecture_produits(fichier):
     produits = []
     if os.path.exists(fichier):
-        df = pd.read_csv(fichier)
-        for _, row in df.iterrows():
-            produits.append(Produit(row['nom'], row['prix'], row['quantite'], row['disponible']))
+        try:
+            df = pd.read_csv(fichier)
+            for _, row in df.iterrows():
+                produits.append(Produit(
+                    str(row['nom']),
+                    float(row['prix']),
+                    int(row['quantite']),
+                    bool(row['disponible'])
+                ))
+        except Exception as e:
+            print(f"Erreur de lecture du fichier : {e}")
     return produits
 
 # Tri normal
@@ -74,7 +85,6 @@ def rechercher_produit(produits, nom):
 
 # Ajouter des produits
 def ajouter_produits(fichier, produit):
-    import pandas as pd
     nouveau_produit = pd.DataFrame({
         'nom': [produit.nom],
         'prix': [produit.prix],
@@ -89,6 +99,8 @@ def ajouter_produits(fichier, produit):
         df = nouveau_produit
     
     df.to_csv(fichier, index=False)
+    print("Produit ajouté dans votre réserve")
+
 
 # Supprimer produit
 def supprim_produit(fichier, produits, nom_produit):
@@ -107,7 +119,7 @@ def afficher_produits(produits):
 
 # Menu interactif 
 def menu_interactif():
-    fichier = 'produits.txt'
+    fichier = 'produits.csv'
     produits = lecture_produits(fichier)
     
     while True : 
@@ -188,7 +200,7 @@ def main():
             role = gestion_utilisateurs.connexion(nom, mdp)
             
             if role:
-                print(f"Connexion réussie! Rôle : {role}")
+                print(f"Connexion réussie au compte {nom} Rôle : {role}")
                 menu_interactif()  
             else:
                 print("Connexion échouée")

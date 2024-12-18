@@ -38,7 +38,7 @@ class Utilisateur:
             mot_de_passe_sale = sel + mot_de_passe.encode()
             hachage = hashlib.sha256(mot_de_passe_sale).hexdigest()
             sel_encode = base64.b64encode(sel).decode()
-            mot_de_passe_final = f"{sel_encode}${hachage}"  # Format correct sel$hash
+            mot_de_passe_final = f"{sel_encode}${hachage}" 
         
             writer = csv.writer(fichier)
             writer.writerow([nom_utilisateur, mot_de_passe_final, role])
