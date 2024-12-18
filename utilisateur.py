@@ -2,7 +2,7 @@ import csv
 import os
 import hashlib
 import base64
-import zipfile
+import requests
 
 
 # Class Utilisateur 
@@ -127,26 +127,29 @@ class Utilisateur:
             print("Utilisateur non trouvé.")
             return False
         
-    def verif_mot_de_passe_compromis(self, mot_de_passe, fichier_zip='rockyou.zip'):
+    def verif_mot_de_passe_compromis(self, mot_de_passe):
         try:
-            with zipfile.ZipFile(fichier_zip, 'r') as myzip:
-            
-                print(f"Contenu du zip : {myzip.namelist()}")
-            
-            
-                fichier_txt = myzip.namelist()[0]  
-            
-                with myzip.open(fichier_txt) as f:
-                    for ligne in f:
-                        try:
-                            if mot_de_passe == ligne.decode('utf-8', errors='ignore').strip():
-                                return True
-                        except UnicodeDecodeError:
-                            continue
+        
+            sha1_hash = hashlib.sha1(mot_de_passe.encode('utf-8')).hexdigest().upper()
+            prefix = sha1_hash[:5]
+            suffix = sha1_hash[5:]
+
+        
+            url = f"https://api.pwnedpasswords.com/range/{prefix}"
+            response = requests.get(url)
+
+            if response.status_code != 200:
+                raise RuntimeError(f"Error: {response.status_code}")
+
+        
+            found = False
+            hashes = (line.split(':') for line in response.text.splitlines())
+            for returned_suffix, count in hashes:
+                if returned_suffix == suffix:
+                    print(f"Ce mot de passe a été compromis {count} fois")
+                    return True
             return False
-        except FileNotFoundError:
-            print(f"Attention: fichier {fichier_zip} non trouvé")
-            return False
+
         except Exception as e:
             print(f"Erreur lors de la vérification du mot de passe: {e}")
             return False
