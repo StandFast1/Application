@@ -5,7 +5,7 @@ import logging
 
 
 logging.basicConfig(
-    filename='application.log', 
+    filename='application.log',
     level=logging.INFO, 
     format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -214,7 +214,7 @@ def main():
                 print(f"Connexion réussie au compte {nom} Rôle : {role}")
                 menu_interactif()
             else:
-                logging.error('Connexion echouee')
+                logging.error(f'Connexion echouee : {nom}')
                 print(f"Connexion échouée  {nom}")
                 
         elif choix == '2':
@@ -223,11 +223,12 @@ def main():
                 mdp = input("Mot de passe : ")
                 
                 if gestion_utilisateurs.verif_mot_de_passe_compromis(mdp):
+                    logging.warning(f'MDP compromis pour le compte {nom}')
                     print("\nCe mot de passe est compromis!")
-                    logging.warning('MDP compromis')
                     continue
                 
                 if gestion_utilisateurs.nouveau_utilisateur(nom, mdp):
+                    logging.info(f'Nouvel utilisateur : {nom}')
                     break
                 
         elif choix == '3':
@@ -236,10 +237,12 @@ def main():
             nouveau_mdp = input("Nouveau mot de passe : ")
             
             if gestion_utilisateurs.verif_mot_de_passe_compromis(nouveau_mdp):
+                logging.warning(f'MDP compromis {mdp} pour le compte {nom} ')
                 print("\nLe nouveau mot de passe est compromis!")
                 continue
                 
             gestion_utilisateurs.changement_mdp(nom, ancien_mdp, nouveau_mdp)
+            logging.info(f'Changement de mot de passe pour le compte {nom}')
 
         elif choix == '4':
             nom = input("Nom d'utilisateur : ")
@@ -248,7 +251,9 @@ def main():
             if gestion_utilisateurs.connexion(nom, mdp):
                 gestion_utilisateurs.sup_utilisateur(nom)
             else:
+                logging.warning(f'Identifiants incorrects : {nom}')
                 print("Identifiants incorrects")
+                
             
         elif choix == '5':
             print("Au revoir!")
@@ -259,6 +264,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-    

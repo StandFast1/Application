@@ -4,3 +4,8 @@
 2024-12-19 14:27:36,995 - ERROR - Connexion échouée à {nom}
 2024-12-19 14:28:14,730 - ERROR - Connexion echouee
 2024-12-19 14:28:23,204 - INFO - Connexion reussite : admi
+2024-12-19 14:44:06,423 - ERROR - Connexion echouee
+2024-12-19 14:45:18,373 - ERROR - Connexion echouee : admi
+2024-12-19 14:45:42,586 - INFO - Connexion reussite : admi
+2024-12-19 14:45:58,214 - WARNING - MDP compromis pour le compte admi1
+2024-12-19 14:46:35,268 - INFO - Nouvel utilisateur : J'aimelesfrites
