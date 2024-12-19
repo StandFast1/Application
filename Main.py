@@ -1,6 +1,14 @@
 import os
 from utilisateur import Utilisateur
 import pandas as pd
+import logging
+
+
+logging.basicConfig(
+    filename='application.log', 
+    level=logging.INFO, 
+    format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 # Fonction principale :
 def gestion():
@@ -9,6 +17,8 @@ def gestion():
         df = pd.DataFrame(columns=['nom', 'prix', 'quantite', 'disponible'])
         df.to_csv(fichier, index=False)
     produits = lecture_produits(fichier)
+
+    
 
 # Classe Produit 
 class Produit:
@@ -200,10 +210,12 @@ def main():
             role = gestion_utilisateurs.connexion(nom, mdp)
             
             if role:
+                logging.info(f'Connexion reussite : {nom}')
                 print(f"Connexion réussie au compte {nom} Rôle : {role}")
-                menu_interactif()  
+                menu_interactif()
             else:
-                print("Connexion échouée")
+                logging.error('Connexion echouee')
+                print(f"Connexion échouée  {nom}")
                 
         elif choix == '2':
             while True:
@@ -212,6 +224,7 @@ def main():
                 
                 if gestion_utilisateurs.verif_mot_de_passe_compromis(mdp):
                     print("\nCe mot de passe est compromis!")
+                    logging.warning('MDP compromis')
                     continue
                 
                 if gestion_utilisateurs.nouveau_utilisateur(nom, mdp):
