@@ -3,6 +3,7 @@ import os
 import hashlib
 import base64
 import requests
+from Notification_email import NotificationEmail
 
 
 # Class Utilisateur 
@@ -10,6 +11,7 @@ class Utilisateur:
     def __init__(self, fichier_utilisateur='utilisateur.csv'):
         self.fichier_utilisateur = fichier_utilisateur
         self.creation_compte()
+        self.notification = NotificationEmail()
 
 
 
@@ -27,9 +29,17 @@ class Utilisateur:
 
 
  # Creation d'un utilisateur
-    def nouveau_utilisateur(self, nom_utilisateur, mot_de_passe, role='utilisateur'):
+    def nouveau_utilisateur(self, nom_utilisateur, mot_de_passe, email, role='utilisateur'):
         if self.verification_utilisateur(nom_utilisateur):
             print("Nom utilisateur déjà réservé")
+            return False
+        
+        if self.verif_mot_de_passe_compromis(mot_de_passe):
+            # Prépare les détails pour l'email
+            details = "Mot de passe trouvé dans une base de données de fuites"
+            # Envoie l'alerte par email
+            self.notification.envoyer_alerte(email, details)
+            print("Un email d'alerte a été envoyé")
             return False
     
         with open(self.fichier_utilisateur, 'a', newline='') as fichier:
