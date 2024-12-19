@@ -253,7 +253,7 @@ def main():
                 mdp = input("Mot de passe : ")
                 email = input("Email : ")
                 
-                if gestion_utilisateurs.verif_mot_de_passe_compromis(mdp, email):
+                if gestion_utilisateurs.verif_mot_de_passe_compromis(mdp, nom):
                     logging.warning(f'MDP compromis pour le compte {nom}')
                     print("\nCe mot de passe est compromis!")
                     continue
@@ -268,7 +268,7 @@ def main():
             nouveau_mdp = input("Nouveau mot de passe : ")
             
             if gestion_utilisateurs.verif_mot_de_passe_compromis(nouveau_mdp):
-                logging.warning(f'MDP compromis {mdp} pour le compte {nom} ')
+                logging.warning(f'MDP compromis pour le compte {nom} ')
                 print("\nLe nouveau mot de passe est compromis!")
                 continue
                 
@@ -279,7 +279,7 @@ def main():
             nom = input("Nom d'utilisateur : ")
             mdp = input("Mot de passe : ")
             
-            if gestion_utilisateurs.connexion(nom, mdp, email):
+            if gestion_utilisateurs.connexion(nom, mdp):
                 gestion_utilisateurs.sup_utilisateur(nom)
             else:
                 logging.warning(f'Identifiants incorrects : {nom}')

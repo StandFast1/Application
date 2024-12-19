@@ -2,7 +2,7 @@ import csv
 import os
 import hashlib
 import base64
-import requests
+import requests 
 from Notification_email import NotificationEmail
 import logging
 
@@ -40,7 +40,7 @@ class Utilisateur:
 
 
  # Creation d'un utilisateur
-    def nouveau_utilisateur(self, nom_utilisateur, mot_de_passe, email, role='utilisateur'):
+    def nouveau_utilisateur(self, nom_utilisateur, mot_de_passe, email, role):
         if self.verification_utilisateur(nom_utilisateur):
             print("Nom utilisateur déjà réservé")
             return False
@@ -162,30 +162,37 @@ class Utilisateur:
 
 
 
-    def verif_mot_de_passe_compromis(self, mot_de_passe, email):
+    def verif_mot_de_passe_compromis(self, mot_de_passe, nom_utilisateur=None):
         try:
-        
+            # Si on a un nom d'utilisateur, on récupère son email
+            email_utilisateur = None
+            if nom_utilisateur:
+                with open(self.fichier_utilisateur, 'r') as fichier:
+                    lecteur = csv.DictReader(fichier)
+                    for ligne in lecteur:
+                        if ligne['nom_utilisateur'] == nom_utilisateur:
+                            email_utilisateur = ligne.get('email')
+                            break
+
+            # Vérification HIBP
             sha1_hash = hashlib.sha1(mot_de_passe.encode('utf-8')).hexdigest().upper()
             prefix = sha1_hash[:5]
             suffix = sha1_hash[5:]
 
-        
             url = f"https://api.pwnedpasswords.com/range/{prefix}"
             response = requests.get(url)
 
             if response.status_code != 200:
                 raise RuntimeError(f"Error: {response.status_code}")
 
-        
-            found = False
             hashes = (line.split(':') for line in response.text.splitlines())
             for returned_suffix, count in hashes:
                 if returned_suffix == suffix:
-                    print(f"Ce mot de passe a été compromis {count} fois")
-                    if self.verif_mot_de_passe_compromis(mot_de_passe):
-                        details = "Mot de passe trouvé dans une base de données de fuites"
-                        self.notification.envoyer_alerte(email, details)
-                        print("Un email d'alerte a été envoyé - Mot de passe compromis")
+                    details = f"Votre mot de passe a été trouvé dans {count} fuites de données"
+                    # Si on a l'email, on envoie l'alerte
+                    if email_utilisateur:
+                        self.notification.envoyer_alerte(email_utilisateur, details)
+                        print(f"Email d'alerte envoyé à {email_utilisateur}")
                     return True
             return False
 
