@@ -258,7 +258,7 @@ def main():
                     print("\nCe mot de passe est compromis!")
                     continue
                 
-                if gestion_utilisateurs.nouveau_utilisateur(nom, mdp, email):
+                if gestion_utilisateurs.nouveau_utilisateur(nom, mdp, email, role='utilisateur'):
                     logging.info(f'Nouvel utilisateur : {nom}')
                     break
                 
