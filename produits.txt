@@ -1,3 +1,0 @@
-Abricot,26.5,800,Oui
-Pomme,2.0,40,Oui
-Peche,90.0,0,Non

@@ -19,13 +19,17 @@ class Utilisateur:
         if not os.path.exists(self.fichier_utilisateur):
             with open(self.fichier_utilisateur, 'w', newline='') as fichier:
                 writer = csv.writer(fichier)
-                writer.writerow(['nom_utilisateur', 'mot_de_passe', 'role'])
+                writer.writerow(['nom_utilisateur', 'mot_de_passe', 'email', 'role'])
+
+
 
  # Verification utilisateur
     def verification_utilisateur(self,nom_utilisateur):
         with open(self.fichier_utilisateur, 'r') as fichier:
             lecture = csv.DictReader(fichier)
             return any(ligne['nom_utilisateur'] == nom_utilisateur for ligne in lecture)
+
+
 
 
  # Creation d'un utilisateur
@@ -35,12 +39,9 @@ class Utilisateur:
             return False
         
         if self.verif_mot_de_passe_compromis(mot_de_passe):
-            # Prépare les détails pour l'email
             details = "Mot de passe trouvé dans une base de données de fuites"
-            # Envoie l'alerte par email
             self.notification.envoyer_alerte(email, details)
-            print("Un email d'alerte a été envoyé")
-            return False
+            print("Un email d'alerte a été envoyé - Mot de passe compromis")
     
         with open(self.fichier_utilisateur, 'a', newline='') as fichier:
         # Hash mdp
@@ -51,12 +52,14 @@ class Utilisateur:
             mot_de_passe_final = f"{sel_encode}${hachage}" 
         
             writer = csv.writer(fichier)
-            writer.writerow([nom_utilisateur, mot_de_passe_final, role])
+            writer.writerow([nom_utilisateur, mot_de_passe_final, email, role])
 
         print(f"Utilisateur {nom_utilisateur} a bien été ajouté")
         return True
     
-#     Changement MDP  
+
+
+ #     Changement MDP  
     def changement_mdp(self, nom_utilisateur, A_mot_de_passe, N_mot_de_passe):
         utilisateurs = []
         utilisateur_trouve = False
@@ -71,7 +74,8 @@ class Utilisateur:
                     utilisateur['mot_de_passe'] = self.hashage_mdp(N_mot_de_passe)
                     utilisateur_trouve = True
                     break
-
+        
+        
         if utilisateur_trouve:
             with open(self.fichier_utilisateur, 'w', newline='') as fichier:
                 writer = csv.DictWriter(fichier, fieldnames=['nom_utilisateur', 'mot_de_passe', 'role'])
@@ -83,7 +87,10 @@ class Utilisateur:
             print("Modification du mot de passe échouée")
             return False
 
-#     Hashage MDP  
+
+
+
+ #     Hashage MDP  
     def hashage_mdp(self, mot_de_passe):
         sel = os.urandom(16)
         mot_de_passe_sale = sel + mot_de_passe.encode()
@@ -91,7 +98,10 @@ class Utilisateur:
         sel_encode = base64.b64encode(sel).decode()
         return f"{sel_encode}${hachage}"
 
-#    Verification MDP  
+
+
+
+ #    Verification MDP  
     def verification_mdp(self, mot_de_passe, hash_stocke):
         try:
             sel_encode, hash_original = hash_stocke.split('$')
@@ -101,8 +111,11 @@ class Utilisateur:
             return nouveau_hash == hash_original
         except:
             return False
-        
-#     Connexion a un compte existant 
+
+
+
+
+ #     Connexion a un compte existant 
     def connexion(self, nom_utilisateur, mot_de_passe):
         try:
             with open(self.fichier_utilisateur, 'r') as fichier:
@@ -116,7 +129,10 @@ class Utilisateur:
             print(f"Erreur lors de la connexion: {e}")  
         return None
     
-#    Supression Utilisateur 
+
+
+
+ #    Supression Utilisateur 
     def sup_utilisateur(self, nom_utilisateur):
         lignes = []
         utilisateur_trouve = False
@@ -137,6 +153,9 @@ class Utilisateur:
             print("Utilisateur non trouvé.")
             return False
         
+
+
+
     def verif_mot_de_passe_compromis(self, mot_de_passe):
         try:
         
@@ -166,6 +185,7 @@ class Utilisateur:
 
      
      
+
 def menu():
     gestion = Utilisateur()
 
@@ -182,13 +202,14 @@ def menu():
         if choix == '1':
             nom_utilisateur = input("Indiquer nom utilisateur: ")
             mot_de_passe = input("indiquer mot de passe: ")
-            gestion.nouveau_utilisateur(nom_utilisateur, mot_de_passe)
+            email = input("Email : ")
+            gestion.nouveau_utilisateur(nom_utilisateur, mot_de_passe, email)
 
             if gestion.verif_mot_de_passe_compromis(mot_de_passe):
                     print("Mot de passe compromis")
                     continue
                 
-            if gestion.nouveau_utilisateur(nom_utilisateur, mot_de_passe):
+            if gestion.nouveau_utilisateur(nom_utilisateur, mot_de_passe, email):
                 break
              
         elif choix == '2':
@@ -212,7 +233,7 @@ def menu():
             nom_utilisateur = input("Indiquer nom utilisateur: ")
             mot_de_passe = input("indiquer mot de passe: ")
 
-            if gestion.verification_utilisateur(nom_utilisateur, mot_de_passe):
+            if gestion.verification_utilisateur(nom_utilisateur, mot_de_passe, email):
                 gestion.sup_utilisateur(nom_utilisateur)
                 print("Utilisateur Supprimer")
             else:

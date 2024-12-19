@@ -35,6 +35,8 @@ class Produit:
         return f"Produit: {self.nom}, Prix: {self.prix}€, Quantite: {self.quantite}, Disponible: {self.disponible}"  # Indication par produit
     
 
+
+
 # Lecture produits dans les fichiers
 def lecture_produits(fichier):
     produits = []
@@ -51,6 +53,9 @@ def lecture_produits(fichier):
         except Exception as e:
             print(f"Erreur de lecture du fichier : {e}")
     return produits
+
+
+
 
 # Tri normal
 def triage_produits(produits, choix):
@@ -70,6 +75,9 @@ def triage_produits(produits, choix):
     else:
         return produits
     
+
+
+
 # Algo Tri à bulles 
 def triage_bulles_produits(produits, choix):
     n = len(produits)
@@ -91,10 +99,16 @@ def triage_bulles_produits(produits, choix):
 
     return produits
 
+
+
+
 # Recherche 
 def rechercher_produit(produits, nom):
     resultat = [p for p in produits if nom.lower() in p.nom.lower()]
     return resultat
+
+
+
 
 # Ajouter des produits
 def ajouter_produits(fichier, produit):
@@ -115,12 +129,18 @@ def ajouter_produits(fichier, produit):
     print("Produit ajouté dans votre réserve")
 
 
+
+
+
 # Supprimer produit
 def supprim_produit(fichier, produits, nom_produit):
     df = pd.DataFrame([{'nom': p.nom, 'prix': p.prix, 'quantite': p.quantite, 'disponible': p.disponible} 
                       for p in produits if p.nom.lower() != nom_produit.lower()])
     df.to_csv(fichier, index=False)
     return [p for p in produits if p.nom.lower() != nom_produit.lower()]
+
+
+
 
 # Afficher liste produit
 def afficher_produits(produits):
@@ -129,6 +149,10 @@ def afficher_produits(produits):
     else:
         for produit in produits:
             print(produit)
+
+
+
+
 
 # Menu interactif 
 def menu_interactif():
@@ -194,6 +218,9 @@ def menu_interactif():
         else:
             print("Valeur non valide, veuillez recommencer")
 
+
+
+
 def main():
     gestion_utilisateurs = Utilisateur()
     
@@ -224,13 +251,14 @@ def main():
             while True:
                 nom = input("Nom d'utilisateur : ")
                 mdp = input("Mot de passe : ")
+                email = input("Email : ")
                 
                 if gestion_utilisateurs.verif_mot_de_passe_compromis(mdp):
                     logging.warning(f'MDP compromis pour le compte {nom}')
                     print("\nCe mot de passe est compromis!")
                     continue
                 
-                if gestion_utilisateurs.nouveau_utilisateur(nom, mdp):
+                if gestion_utilisateurs.nouveau_utilisateur(nom, mdp, email):
                     logging.info(f'Nouvel utilisateur : {nom}')
                     break
                 

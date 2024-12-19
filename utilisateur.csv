@@ -1,3 +1,2 @@
-nom_utilisateur,mot_de_passe,role
-admi,XG38mxVXmiLA3bOqfqz8bg==$27fcc4e455e5e2f99825df64bb708e106453f0b5d7ccf72092e88e52a753e3ce,utilisateur
-J'aimelesfrites,TRWhB/Fe6YDLfee4Bpvljg==$69d01ebd0a1745f7512bde2d8ef2d614ea741891a45157ac76993b91c242f479,utilisateur
+nom_utilisateur,mot_de_passe,email,role
+J'aimelesfrites,Hhr1iRUgGQ1VarLDm0DYRQ==$e279762e9593ba757ef52fab1ae4d177c3a24a173c04c19d38026fd5f8cae64c,timote7464@gmail.com,utilisateur

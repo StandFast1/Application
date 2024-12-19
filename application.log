@@ -9,3 +9,9 @@
 2024-12-19 14:45:42,586 - INFO - Connexion reussite : admi
 2024-12-19 14:45:58,214 - WARNING - MDP compromis pour le compte admi1
 2024-12-19 14:46:35,268 - INFO - Nouvel utilisateur : J'aimelesfrites
+2024-12-19 15:20:58,963 - INFO - Connexion reussite : admi
+2024-12-19 15:30:32,878 - INFO - Connexion reussite : J'aimelesfrites
+2024-12-19 15:38:58,387 - INFO - Nouvel utilisateur : J'aimelafrite
+2024-12-19 15:40:10,269 - WARNING - MDP compromis J'aimelafrite pour le compte J'aimelafrite 
+2024-12-19 16:28:30,975 - WARNING - MDP compromis pour le compte admi
+2024-12-19 16:29:00,710 - INFO - Nouvel utilisateur : J'aimelesfrites
