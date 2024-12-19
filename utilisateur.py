@@ -4,6 +4,13 @@ import hashlib
 import base64
 import requests
 from Notification_email import NotificationEmail
+import logging
+
+
+logging.basicConfig(
+    filename='application.log',
+    level=logging.INFO, 
+    format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 # Class Utilisateur 
@@ -38,10 +45,7 @@ class Utilisateur:
             print("Nom utilisateur déjà réservé")
             return False
         
-        if self.verif_mot_de_passe_compromis(mot_de_passe):
-            details = "Mot de passe trouvé dans une base de données de fuites"
-            self.notification.envoyer_alerte(email, details)
-            print("Un email d'alerte a été envoyé - Mot de passe compromis")
+        
     
         with open(self.fichier_utilisateur, 'a', newline='') as fichier:
         # Hash mdp
@@ -81,9 +85,11 @@ class Utilisateur:
                 writer = csv.DictWriter(fichier, fieldnames=['nom_utilisateur', 'mot_de_passe', 'role'])
                 writer.writeheader()
                 writer.writerows(utilisateurs)
+                logging.info(f'Mot de passe modifie : {nom_utilisateur}')
             print("Mot de passe modifié avec succès")
             return True
         else:
+            logging.info(f'Mot de passe modifie échouée : {nom_utilisateur}')
             print("Modification du mot de passe échouée")
             return False
 
@@ -156,7 +162,7 @@ class Utilisateur:
 
 
 
-    def verif_mot_de_passe_compromis(self, mot_de_passe):
+    def verif_mot_de_passe_compromis(self, mot_de_passe, email):
         try:
         
             sha1_hash = hashlib.sha1(mot_de_passe.encode('utf-8')).hexdigest().upper()
@@ -176,6 +182,10 @@ class Utilisateur:
             for returned_suffix, count in hashes:
                 if returned_suffix == suffix:
                     print(f"Ce mot de passe a été compromis {count} fois")
+                    if self.verif_mot_de_passe_compromis(mot_de_passe):
+                        details = "Mot de passe trouvé dans une base de données de fuites"
+                        self.notification.envoyer_alerte(email, details)
+                        print("Un email d'alerte a été envoyé - Mot de passe compromis")
                     return True
             return False
 
