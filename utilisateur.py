@@ -82,7 +82,7 @@ class Utilisateur:
         
         if utilisateur_trouve:
             with open(self.fichier_utilisateur, 'w', newline='') as fichier:
-                writer = csv.DictWriter(fichier, fieldnames=['nom_utilisateur', 'mot_de_passe', 'role'])
+                writer = csv.DictWriter(fichier, fieldnames=['nom_utilisateur', 'mot_de_passe', 'email', 'role'])
                 writer.writeheader()
                 writer.writerows(utilisateurs)
                 logging.info(f'Mot de passe modifie : {nom_utilisateur}')
