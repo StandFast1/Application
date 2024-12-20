@@ -164,7 +164,7 @@ class Utilisateur:
 
     def verif_mot_de_passe_compromis(self, mot_de_passe, nom_utilisateur=None):
         try:
-            # Si on a un nom d'utilisateur, on récupère son email
+            
             email_utilisateur = None
             if nom_utilisateur:
                 with open(self.fichier_utilisateur, 'r') as fichier:
@@ -174,7 +174,7 @@ class Utilisateur:
                             email_utilisateur = ligne.get('email')
                             break
 
-            # Vérification HIBP
+            
             sha1_hash = hashlib.sha1(mot_de_passe.encode('utf-8')).hexdigest().upper()
             prefix = sha1_hash[:5]
             suffix = sha1_hash[5:]
@@ -189,7 +189,7 @@ class Utilisateur:
             for returned_suffix, count in hashes:
                 if returned_suffix == suffix:
                     details = f"Votre mot de passe a été trouvé dans {count} fuites de données"
-                    # Si on a l'email, on envoie l'alerte
+                    
                     if email_utilisateur:
                         self.notification.envoyer_alerte(email_utilisateur, details)
                         print(f"Email d'alerte envoyé à {email_utilisateur}")
