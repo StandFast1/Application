@@ -21,7 +21,7 @@ class NotificationEmail:
         message["To"] = email_utilisateur.encode('utf-8').decode('ascii', 'ignore')
         message["Subject"] = "Alerte de sécurité - Compromission détectée"
 
-        # Encodage du contenu en UTF-8
+       
         contenu = f"""
         ALERTE DE SECURITE
 
@@ -41,7 +41,7 @@ class NotificationEmail:
 
         try:
             with smtplib.SMTP(self.serveur_smtp, self.port_smtp) as serveur:
-                logging.warning(f'email envoye : {email_utilisateur}')
+                logging.info(f'email envoye : {email_utilisateur}')
                 serveur.starttls()
                 serveur.login(self.email_expediteur, self.mot_de_passe)
                 serveur.send_message(message)

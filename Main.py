@@ -270,6 +270,11 @@ def main():
             if gestion_utilisateurs.verif_mot_de_passe_compromis(nouveau_mdp):
                 logging.warning(f'MDP compromis pour le compte {nom} ')
                 print("\nLe nouveau mot de passe est compromis!")
+                print("Le mot de passe doit faire au moins 12 caractères")
+                print("Ajouter au moins une lettre majuscule")
+                print("Ajouter au moins une lettre minuscule")
+                print("Ajouter au moins un chiffre")
+                print("Ajouter au moins un caractère spécial (!@#$%^&*)")
                 continue
                 
             gestion_utilisateurs.changement_mdp(nom, ancien_mdp, nouveau_mdp, email)
