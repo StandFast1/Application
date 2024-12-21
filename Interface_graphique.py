@@ -9,7 +9,7 @@ class AppInterface(tk.Tk):
     def __init__(self):
         super().__init__()
 
-        self.title("Gestion de Produits")
+        self.title("Application Gestion Produit Python faite par Tim")
         self.geometry("800x600")
         
         # Initialisation des objets
@@ -22,7 +22,7 @@ class AppInterface(tk.Tk):
     def creer_interface_connexion(self):
         # Frame de connexion
         self.frame_connexion = ttk.Frame(self)
-        self.frame_connexion.pack(padx=20, pady=20)
+        self.frame_connexion.pack(padx=30, pady=20)
 
         # Champs de connexion
         ttk.Label(self.frame_connexion, text="Nom d'utilisateur :").grid(row=0, column=0, padx=5, pady=5)
