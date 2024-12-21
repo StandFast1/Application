@@ -9,7 +9,7 @@ class AppInterface(tk.Tk):
     def __init__(self):
         super().__init__()
 
-        self.title("Application Gestion Produit Python faite par Tim")
+        self.title("Application Python by Tim")
         self.geometry("800x600")
         
         # Initialisation des objets
@@ -175,9 +175,9 @@ class AppInterface(tk.Tk):
                 messagebox.showerror("Erreur", f"Erreur lors de l'ajout du produit : {e}")
 
     # Boutons
-    ttk.Button(frame_boutons, text="Vérifier", command=verifier_donnees).pack(side=tk.LEFT, padx=5)
-    ttk.Button(frame_boutons, text="Ajouter", command=ajouter_produit).pack(side=tk.LEFT, padx=5)
-    ttk.Button(frame_boutons, text="Annuler", command=fenetre_ajout.destroy).pack(side=tk.LEFT, padx=5)
+        ttk.Button(frame_boutons, text="Vérifier", command=verifier_donnees).pack(side=tk.LEFT, padx=5)
+        ttk.Button(frame_boutons, text="Ajouter", command=ajouter_produit).pack(side=tk.LEFT, padx=5)
+        ttk.Button(frame_boutons, text="Annuler", command=fenetre_ajout.destroy).pack(side=tk.LEFT, padx=5)
 
     
     def charger_produits(self):
@@ -251,7 +251,7 @@ class AppInterface(tk.Tk):
                 messagebox.showwarning("Attention", "Ce mot de passe est compromis!")
                 return
 
-            if self.gestion_utilisateurs.nouveau_utilisateur(nom, mdp, email):
+            if self.gestion_utilisateurs.nouveau_utilisateur(nom, mdp, email, role='utilisateur'):
                 messagebox.showinfo("Succès", "Compte créé avec succès!")
                 fenetre_creation.destroy()
             else:
