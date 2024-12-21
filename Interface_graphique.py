@@ -4,6 +4,15 @@ from tkinter import messagebox
 from utilisateur import Utilisateur
 import pandas as pd
 import os
+import logging
+
+
+
+logging.basicConfig(
+    filename='application.log',
+    level=logging.INFO, 
+    format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 class AppInterface(tk.Tk):
     def __init__(self):
@@ -36,8 +45,38 @@ class AppInterface(tk.Tk):
         # Boutons
         ttk.Button(self.frame_connexion, text="Se connecter", command=self.connexion).grid(row=2, column=0, columnspan=2, pady=10)
         ttk.Button(self.frame_connexion, text="Créer un compte", command=self.afficher_creation_compte).grid(row=3, column=0, columnspan=2)
+        ttk.Button(self.frame_connexion, text="Changer de mot de passe", command=self.inferface_changer_mot_de_passe).grid(row=4, column=0, columnspan=2, pady=12)
+        ttk.Button(self.frame_connexion, text="Supprimer un compte", command=self.supprimer_compte).grid(row=5, column=0, columnspan=2, pady=10)
         
 
+    def inferface_changer_mot_de_passe(self):
+        nom = self.username_entry.get()
+        mdp = self.password_entry.get()
+        role = self.gestion_utilisateurs.connexion(nom, mdp)
+
+        if role:
+            ttk.Label(self.frame_connexion, text="Mot de passe :").grid(row=1, column=0, padx=5, pady=5)
+            self.password_entry = ttk.Entry(self.frame_connexion, show="*")
+            self.password_entry.grid(row=1, column=1, padx=5, pady=5)
+            logging.info(f'Changement mot de passe echoue : {nom}')
+
+        else:
+            logging.info(f'Changement mot de passe echoue : {nom}')
+            messagebox.showerror("Erreur", "Identifiants incorrects")
+
+    def supprimer_compte(self):
+        nom = self.username_entry.get()
+        mdp = self.password_entry.get()
+        role = self.gestion_utilisateurs.connexion(nom, mdp)
+
+        if role:
+            logging.info(f'Suppretion compte : {nom}')
+            mdp = input(f"Indiquer un nouveau mot de passe : ")
+
+        else:
+            logging.info(f'Suppretion compte echoue : {nom}')
+            messagebox.showerror("Erreur", "Identifiants incorrects")
+        
 
     def connexion(self):
         nom = self.username_entry.get()
@@ -47,8 +86,10 @@ class AppInterface(tk.Tk):
         if role:
             self.utilisateur_connecte = nom
             messagebox.showinfo("Succès", f"Connexion réussie en tant que {role}")
+            logging.info(f'Connexion reussite : {nom}')
             self.afficher_interface_produits()
         else:
+            logging.info(f'Connexion echoue : {nom}')
             messagebox.showerror("Erreur", "Identifiants incorrects")
 
     def afficher_interface_produits(self):
@@ -72,7 +113,7 @@ class AppInterface(tk.Tk):
         frame_boutons.pack(side=tk.RIGHT)
     
         ttk.Button(frame_boutons, text="Rechercher", command=self.rechercher_produits).pack(side=tk.LEFT, padx=5)
-        ttk.Button(frame_boutons, text="Réinitialiser", command=self.charger_produits).pack(side=tk.LEFT, padx=5)  # Nouveau bouton
+        ttk.Button(frame_boutons, text="Réinitialiser", command=self.charger_produits).pack(side=tk.LEFT, padx=5)  
         ttk.Button(frame_boutons, text="Ajouter un produit", command=self.afficher_ajout_produit).pack(side=tk.LEFT, padx=5)
 
         # Liste des produits
@@ -88,6 +129,8 @@ class AppInterface(tk.Tk):
 
         # Charger les produits
         self.charger_produits()
+
+
 
     def afficher_ajout_produit(self):
         fenetre_ajout = tk.Toplevel(self)
@@ -248,13 +291,16 @@ class AppInterface(tk.Tk):
                 return
 
             if self.gestion_utilisateurs.verif_mot_de_passe_compromis(mdp):
+                logging.warning(f'Mot de passe compromis : {username_entry}')
                 messagebox.showwarning("Attention", "Ce mot de passe est compromis!")
                 return
 
             if self.gestion_utilisateurs.nouveau_utilisateur(nom, mdp, email, role='utilisateur'):
+                logging.info(f'Nouveau compte : {username_entry}')
                 messagebox.showinfo("Succès", "Compte créé avec succès!")
                 fenetre_creation.destroy()
             else:
+                logging.error(f'Connexion reussite : {username_entry}')
                 messagebox.showerror("Erreur", "Erreur lors de la création du compte")
 
         ttk.Button(frame, text="Créer le compte", command=creer_compte).pack(pady=20)

@@ -25,7 +25,7 @@ def gestion():
 
 # Classe Produit 
 class Produit:
-    def __init__(self, nom, prix, quantite, disponible=True):
+    def __init__(self, nom, prix, quantite, disponible):
         self.nom = nom
         self.prix = float(prix)
         self.quantite = int(quantite)
