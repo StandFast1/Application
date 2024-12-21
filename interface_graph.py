@@ -52,6 +52,13 @@ class AppInterface(tk.Tk):
             messagebox.showerror("Erreur", "Identifiants incorrects")
 
     def afficher_interface_produits(self):
+
+        frame_utilisateur = ttk.Frame(self.frame_principal)
+        frame_utilisateur.pack(fill=tk.X, pady=10)
+        ttk.Button(frame_utilisateur, text="Changer mot de passe", command=self.afficher_changement_mdp).pack(side=tk.LEFT, padx=5)
+        ttk.Button(frame_utilisateur, text="Supprimer compte", command=self.afficher_suppression_compte).pack(side=tk.LEFT, padx=5)
+        ttk.Button(frame_utilisateur, text="Déconnexion", command=self.deconnexion).pack(side=tk.RIGHT, padx=5)
+        
         # Cacher l'interface de connexion
         self.frame_connexion.pack_forget()
 
@@ -66,14 +73,8 @@ class AppInterface(tk.Tk):
         ttk.Label(frame_recherche, text="Rechercher :").pack(side=tk.LEFT, padx=5)
         self.recherche_entry = ttk.Entry(frame_recherche)
         self.recherche_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
-    
-        # Boutons de la barre d'outils
-        frame_boutons = ttk.Frame(frame_recherche)
-        frame_boutons.pack(side=tk.RIGHT)
-    
-        ttk.Button(frame_boutons, text="Rechercher", command=self.rechercher_produits).pack(side=tk.LEFT, padx=5)
-        ttk.Button(frame_boutons, text="Réinitialiser", command=self.charger_produits).pack(side=tk.LEFT, padx=5)  # Nouveau bouton
-        ttk.Button(frame_boutons, text="Ajouter un produit", command=self.afficher_ajout_produit).pack(side=tk.LEFT, padx=5)
+        ttk.Button(frame_recherche, text="Rechercher", command=self.rechercher_produits).pack(side=tk.LEFT, padx=5)
+        ttk.Button(frame_recherche, text="Ajouter un produit", command=self.afficher_ajout_produit).pack(side=tk.LEFT, padx=5)
 
         # Liste des produits
         self.tree = ttk.Treeview(self.frame_principal, columns=('Nom', 'Prix', 'Quantité', 'Disponible'), show='headings')
@@ -92,7 +93,7 @@ class AppInterface(tk.Tk):
     def afficher_ajout_produit(self):
         fenetre_ajout = tk.Toplevel(self)
         fenetre_ajout.title("Ajouter un produit")
-        fenetre_ajout.geometry("400x400")
+        fenetre_ajout.geometry("400x300")
 
         frame = ttk.Frame(fenetre_ajout, padding="20")
         frame.pack(fill=tk.BOTH, expand=True)
@@ -114,31 +115,6 @@ class AppInterface(tk.Tk):
         disponible_var = tk.BooleanVar()
         ttk.Checkbutton(frame, variable=disponible_var).pack(pady=5)
 
-        frame_boutons = ttk.Frame(frame)
-        frame_boutons.pack(pady=20)
-
-        def verifier_donnees():
-            try:
-                nom = nom_entry.get()
-                prix = float(prix_entry.get())
-                quantite = int(quantite_entry.get())
-                disponible = disponible_var.get()
-
-                if not nom:
-                    messagebox.showerror("Erreur", "Le nom est requis")
-                    return
-
-                messagebox.showinfo("Verification", f"""
-                Détails du produit :
-                Nom: {nom}
-                Prix: {prix}€
-                Quantité: {quantite}
-                Disponible: {'Oui' if disponible else 'Non'}
-                """)
-
-            except ValueError:
-                messagebox.showerror("Erreur", "Prix et quantité doivent être des nombres")
-    
         def ajouter_produit():
             try:
                 nom = nom_entry.get()
@@ -150,36 +126,31 @@ class AppInterface(tk.Tk):
                     messagebox.showerror("Erreur", "Le nom est requis")
                     return
 
-                if messagebox.askyesno("Confirmation", "Voulez-vous vraiment ajouter ce produit ?"):
-                    nouveau_produit = pd.DataFrame({
-                        'nom': [nom],
-                        'prix': [prix],
-                        'quantite': [quantite],
-                        'disponible': [disponible]
-                    })
+                nouveau_produit = pd.DataFrame({
+                    'nom': [nom],
+                    'prix': [prix],
+                    'quantite': [quantite],
+                    'disponible': [disponible]
+                })
 
-                    if os.path.exists('produits.csv'):
-                        df = pd.read_csv('produits.csv')
-                        df = pd.concat([df, nouveau_produit])
-                    else:
-                        df = nouveau_produit
+                if os.path.exists('produits.csv'):
+                    df = pd.read_csv('produits.csv')
+                    df = pd.concat([df, nouveau_produit])
+                else:
+                    df = nouveau_produit
 
-                    df.to_csv('produits.csv', index=False)
-                    messagebox.showinfo("Succès", "Produit ajouté avec succès!")
-                    self.charger_produits()
-                    fenetre_ajout.destroy()
+                df.to_csv('produits.csv', index=False)
+                messagebox.showinfo("Succès", "Produit ajouté avec succès!")
+                self.charger_produits()
+                fenetre_ajout.destroy()
 
             except ValueError:
                 messagebox.showerror("Erreur", "Prix et quantité doivent être des nombres")
             except Exception as e:
                 messagebox.showerror("Erreur", f"Erreur lors de l'ajout du produit : {e}")
 
-    # Boutons
-    ttk.Button(frame_boutons, text="Vérifier", command=verifier_donnees).pack(side=tk.LEFT, padx=5)
-    ttk.Button(frame_boutons, text="Ajouter", command=ajouter_produit).pack(side=tk.LEFT, padx=5)
-    ttk.Button(frame_boutons, text="Annuler", command=fenetre_ajout.destroy).pack(side=tk.LEFT, padx=5)
+        ttk.Button(frame, text="Ajouter", command=ajouter_produit).pack(pady=20)
 
-    
     def charger_produits(self):
         try:
             df = pd.read_csv('produits.csv')
@@ -258,6 +229,8 @@ class AppInterface(tk.Tk):
                 messagebox.showerror("Erreur", "Erreur lors de la création du compte")
 
         ttk.Button(frame, text="Créer le compte", command=creer_compte).pack(pady=20)
+
+        
 
 if __name__ == "__main__":
     app = AppInterface()
