@@ -51,6 +51,18 @@ class AppInterface(tk.Tk):
 
     def inferface_changer_mot_de_passe(self):
 
+        #self.frame_connexion.pack_forget()
+
+        #self.frame_changement = ttk.Frame(self)
+        #self.frame_changement.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
+    
+
+        #self.frame_bouton = ttk.Frame(self.frame_changement)
+        #frame_boutons = ttk.Frame(frame_boutons)
+        #frame_boutons.pack(side=tk.LEFT)
+
+        #ttk.Button(frame_boutons, text="Confirmer", command=self)
+
         fenetre_new_password = tk.Toplevel(self)
         fenetre_new_password.title("Changement de mot de passe")
         fenetre_new_password.geometry("500x500")
@@ -69,7 +81,7 @@ class AppInterface(tk.Tk):
         frame_boutons = ttk.Frame(frame)
         frame_boutons.pack(pady=20)
 
-        ttk.Button(self.frame_connexion, text="Confirmer", command=self.connexion).grid(row=2, column=0, columnspan=2, pady=10)
+        ttk.Button(self.fene, text="Confirmer", command=self.connexion).grid(row=2, column=0, columnspan=2, pady=10)
 
 
     def verifier_donnees():
