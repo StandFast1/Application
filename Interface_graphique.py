@@ -50,18 +50,58 @@ class AppInterface(tk.Tk):
         
 
     def inferface_changer_mot_de_passe(self):
+
+        fenetre_new_password = tk.Toplevel(self)
+        fenetre_new_password.title("Changement de mot de passe")
+        fenetre_new_password.geometry("500x500")
+
+        frame = ttk.Frame(fenetre_new_password, padding="20")
+        frame.pack(fill=tk.BOTH, expand=True)
+
+        ttk.Label(frame, text="Identifiant :").pack(pady=5)
+        username_entry = ttk.Entry(frame)
+        username_entry.pack(pady=5)
+
+        ttk.Label(frame, text="Password :").pack(pady=5)
+        password_entry = ttk.Entry(frame)
+        password_entry.pack(pady=5)
+
+        frame_boutons = ttk.Frame(frame)
+        frame_boutons.pack(pady=20)
+
+        ttk.Button(self.frame_connexion, text="Confirmer", command=self.connexion).grid(row=2, column=0, columnspan=2, pady=10)
+
+
+    def verifier_donnees():
+        try:
+            nom = self.username_entry.get()
+            mdp = self.password_entry.get()
+            role = self.gestion_utilisateurs.connexion(nom, mdp)
+
+            if role:
+                self.utilisateur_connecte = nom
+                messagebox.showinfo("Succès", f"Connexion réussie en tant que {role}")
+                logging.info(f'Connexion reussite : {nom}')
+            else: 
+                None
+        except ValueError:
+                messagebox.showerror("Erreur", "Prix et quantité doivent être des nombres")
+
+
+
+
+
+    def changer_mot_de_passe(self):
         nom = self.username_entry.get()
         mdp = self.password_entry.get()
         role = self.gestion_utilisateurs.connexion(nom, mdp)
 
         if role:
-            ttk.Label(self.frame_connexion, text="Mot de passe :").grid(row=1, column=0, padx=5, pady=5)
-            self.password_entry = ttk.Entry(self.frame_connexion, show="*")
-            self.password_entry.grid(row=1, column=1, padx=5, pady=5)
-            logging.info(f'Changement mot de passe echoue : {nom}')
+            logging.info(f'Suppretion compte : {nom}')
+            mdp = input(f"Indiquer un nouveau mot de passe : ")
 
         else:
-            logging.info(f'Changement mot de passe echoue : {nom}')
+            logging.info(f'Suppretion compte echoue : {nom}')
             messagebox.showerror("Erreur", "Identifiants incorrects")
 
     def supprimer_compte(self):
@@ -77,7 +117,6 @@ class AppInterface(tk.Tk):
             logging.info(f'Suppretion compte echoue : {nom}')
             messagebox.showerror("Erreur", "Identifiants incorrects")
         
-
     def connexion(self):
         nom = self.username_entry.get()
         mdp = self.password_entry.get()
