@@ -1,7 +1,8 @@
-nom,prix,quantite,disponible
-abricot,5.0,1,non
-banane,50.0,10,oui
-patates,90.0,800,oui
-zerdick,20.4,700,non
-betrave,2.6,4,True
-pomme de terre,2.1,36,False
+nom,prix,quantite,disponible,proprietaire
+abricot,5.0,1,non,
+banane,50.0,10,oui,
+patates,90.0,800,oui,
+zerdick,20.4,700,non,
+betrave,2.6,4,True,
+pomme de terre,2.1,36,False,
+test,2.0,4,False,

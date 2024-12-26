@@ -17,9 +17,10 @@ logging.basicConfig(
 def gestion():
     fichier = 'produits.csv'
     if not os.path.exists(fichier):
-        df = pd.DataFrame(columns=['nom', 'prix', 'quantite', 'disponible'])
+        df = pd.DataFrame(columns=['nom', 'prix', 'quantite', 'disponible', 'proprietaire'])
         df.to_csv(fichier, index=False)
-    produits = lecture_produits(fichier)
+        return [] 
+    return lecture_produits(fichier)
 
     
 
@@ -43,6 +44,7 @@ def lecture_produits(fichier):
     if os.path.exists(fichier):
         try:
             df = pd.read_csv(fichier)
+            df = df[df['proprietaire'] == proprietaire]
             for _, row in df.iterrows():
                 produits.append(Produit(
                     str(row['nom']),
@@ -116,7 +118,8 @@ def ajouter_produits(fichier, produit):
         'nom': [produit.nom],
         'prix': [produit.prix],
         'quantite': [produit.quantite],
-        'disponible': [produit.disponible]
+        'disponible': [produit.disponible],
+        'proprietaire': [proprietaire]
     })
     
     if os.path.exists(fichier):
@@ -242,7 +245,7 @@ def main():
             if role:
                 logging.info(f'Connexion reussite : {nom}')
                 print(f"Connexion réussie au compte {nom} Rôle : {role}")
-                menu_interactif()
+                menu_interactif(nom)
             else:
                 logging.error(f'Connexion echouee : {nom}')
                 print(f"Connexion échouée  {nom}")
