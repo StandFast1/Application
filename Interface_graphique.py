@@ -5,6 +5,7 @@ from utilisateur import Utilisateur
 import pandas as pd
 import os
 import logging
+import csv
 
 
 
@@ -21,19 +22,20 @@ class AppInterface(tk.Tk):
         self.title("Application Python by Tim")
         self.geometry("800x600")
         
-        # Initialisation des objets
+        
         self.gestion_utilisateurs = Utilisateur()
         self.utilisateur_connecte = None
 
-        # Création de l'interface de connexion
+        
+
         self.creer_interface_connexion()
 
     def creer_interface_connexion(self):
-        # Frame de connexion
+        
         self.frame_connexion = ttk.Frame(self)
         self.frame_connexion.pack(padx=30, pady=20)
 
-        # Champs de connexion
+    
         ttk.Label(self.frame_connexion, text="Nom d'utilisateur :").grid(row=0, column=0, padx=5, pady=5)
         self.username_entry = ttk.Entry(self.frame_connexion)
         self.username_entry.grid(row=0, column=1, padx=5, pady=5)
@@ -42,7 +44,6 @@ class AppInterface(tk.Tk):
         self.password_entry = ttk.Entry(self.frame_connexion, show="*")
         self.password_entry.grid(row=1, column=1, padx=5, pady=5)
 
-        # Boutons
         ttk.Button(self.frame_connexion, text="Se connecter", command=self.connexion).grid(row=2, column=0, columnspan=2, pady=10)
         ttk.Button(self.frame_connexion, text="Créer un compte", command=self.afficher_creation_compte).grid(row=3, column=0, columnspan=2)
         ttk.Button(self.frame_connexion, text="Changer de mot de passe", command=self.inferface_changer_mot_de_passe).grid(row=4, column=0, columnspan=2, pady=12)
@@ -125,50 +126,12 @@ class AppInterface(tk.Tk):
         ttk.Button(frame_boutons, text="Confirmer", command=supression_utilisateur).pack(side=tk.LEFT, padx=5)
         ttk.Button(frame_boutons, text="Annuler", command=fenetre_supression_utilisateur.destroy).pack(side=tk.LEFT, padx=5)
 
-    def sup_utilisateur(self, nom_utilisateur):
-        lignes = []
-        utilisateur_trouve = False
-
-        with open(self.fichier_utilisateur, 'r') as fichier:
-            lecteur = csv.DictReader(fichier)
-            lignes = [ligne for ligne in lecteur if ligne['nom_utilisateur'] != nom_utilisateur]
-            utilisateur_trouve = len(lignes) < fichier.tell()
-
-        if utilisateur_trouve:
-            with open(self.fichier_utilisateur, 'w', newline='') as fichier:
-                writer = csv.DictWriter(fichier, fieldnames=['nom_utilisateur', 'mot_de_passe', 'email', 'role'])  # Ajout de 'email'
-                writer.writeheader()
-                writer.writerows(lignes)
-            return True
-        return False
+    
 
 
+   
 
-    def changer_mot_de_passe(self):
-        nom = self.username_entry.get()
-        mdp = self.password_entry.get()
-        role = self.gestion_utilisateurs.connexion(nom, mdp)
-
-        if role:
-            logging.info(f'Suppretion compte : {nom}')
-            mdp = input(f"Indiquer un nouveau mot de passe : ")
-
-        else:
-            logging.info(f'Suppretion compte echoue : {nom}')
-            messagebox.showerror("Erreur", "Identifiants incorrects")
-
-    def supprimer_compte(self):
-        nom = self.username_entry.get()
-        mdp = self.password_entry.get()
-        role = self.gestion_utilisateurs.connexion(nom, mdp)
-
-        if role:
-            logging.info(f'Suppretion compte : {nom}')
-            mdp = input(f"Indiquer un nouveau mot de passe : ")
-
-        else:
-            logging.info(f'Suppretion compte echoue : {nom}')
-            messagebox.showerror("Erreur", "Identifiants incorrects")
+    
         
     def connexion(self):
         nom = self.username_entry.get()

@@ -199,6 +199,25 @@ class Utilisateur:
         except Exception as e:
             print(f"Erreur lors de la vérification du mot de passe: {e}")
             return False
+        
+    def sup_utilisateur(self, nom_utilisateur):
+        lignes = []
+        utilisateur_trouve = False
+
+    # Lecture avec tous les champs
+        with open(self.fichier_utilisateur, 'r') as fichier:
+            lecteur = csv.DictReader(fichier)
+            lignes = [ligne for ligne in lecteur if ligne['nom_utilisateur'] != nom_utilisateur]
+            utilisateur_trouve = len(lignes) < fichier.tell()
+
+        if utilisateur_trouve:
+            # Écriture avec tous les champs corrects
+            with open(self.fichier_utilisateur, 'w', newline='') as fichier:
+                writer = csv.DictWriter(fichier, fieldnames=['nom_utilisateur', 'mot_de_passe', 'email', 'role'])
+                writer.writeheader()
+                writer.writerows(lignes)
+            return True
+        return False
 
      
      
