@@ -195,7 +195,7 @@ class AppInterface(tk.Tk):
         frame = ttk.Frame(fenetre_ajout, padding="20")
         frame.pack(fill=tk.BOTH, expand=True)
 
-        # Champs
+    
         ttk.Label(frame, text="Nom du produit :").pack(pady=5)
         nom_entry = ttk.Entry(frame)
         nom_entry.pack(pady=5)
@@ -253,7 +253,8 @@ class AppInterface(tk.Tk):
                         'nom': [nom],
                         'prix': [prix],
                         'quantite': [quantite],
-                        'disponible': [disponible]
+                        'disponible': [disponible],
+                        'proprietaire': [self.utilisateur_connecte]
                     })
 
                     if os.path.exists('produits.csv'):
@@ -281,7 +282,9 @@ class AppInterface(tk.Tk):
     def charger_produits(self):
         try:
             df = pd.read_csv('produits.csv')
+            df = df[df['proprietaire'] == self.utilisateur_connecte]
             self.tree.delete(*self.tree.get_children())
+
             for _, row in df.iterrows():
                 self.tree.insert('', tk.END, values=(
                     row['nom'],
@@ -298,6 +301,8 @@ class AppInterface(tk.Tk):
         
         try:
             df = pd.read_csv('produits.csv')
+            df_filtree = df[df['nom'].str.lower().str.contains(recherche)]
+            df = df[df['proprietaire'] == self.utilisateur_connecte]
             df_filtree = df[df['nom'].str.lower().str.contains(recherche)]
             
             for _, row in df_filtree.iterrows():

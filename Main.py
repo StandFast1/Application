@@ -26,31 +26,33 @@ def gestion():
 
 # Classe Produit 
 class Produit:
-    def __init__(self, nom, prix, quantite, disponible):
+    def __init__(self, nom, prix, quantite, disponible, proprietaire):
         self.nom = nom
         self.prix = float(prix)
         self.quantite = int(quantite)
         self.disponible = disponible
+        self.proprietaire = proprietaire
 
     def __str__(self):
-        return f"Produit: {self.nom}, Prix: {self.prix}€, Quantite: {self.quantite}, Disponible: {self.disponible}"  # Indication par produit
+        return f"Produit: {self.nom}, Prix: {self.prix}€, Quantite: {self.quantite}, Disponible: {self.disponible}, proprietaire: {self.proprietaire}"  # Indication par produit
     
 
 
 
 # Lecture produits dans les fichiers
-def lecture_produits(fichier):
+def lecture_produits(fichier, proprietaire):  
     produits = []
     if os.path.exists(fichier):
         try:
             df = pd.read_csv(fichier)
-            df = df[df['proprietaire'] == proprietaire]
+            df = df[df['proprietaire'] == proprietaire]  
             for _, row in df.iterrows():
                 produits.append(Produit(
                     str(row['nom']),
                     float(row['prix']),
                     int(row['quantite']),
-                    bool(row['disponible'])
+                    bool(row['disponible']),
+                    str(row['proprietaire'])
                 ))
         except Exception as e:
             print(f"Erreur de lecture du fichier : {e}")
@@ -113,13 +115,13 @@ def rechercher_produit(produits, nom):
 
 
 # Ajouter des produits
-def ajouter_produits(fichier, produit):
+def ajouter_produits(fichier, produit, ):
     nouveau_produit = pd.DataFrame({
         'nom': [produit.nom],
         'prix': [produit.prix],
         'quantite': [produit.quantite],
         'disponible': [produit.disponible],
-        'proprietaire': [proprietaire]
+        'proprietaire': [produit.proprietaire]
     })
     
     if os.path.exists(fichier):
@@ -158,7 +160,7 @@ def afficher_produits(produits):
 
 
 # Menu interactif 
-def menu_interactif():
+def menu_interactif(proprietaire):
     fichier = 'produits.csv'
     produits = lecture_produits(fichier)
     
@@ -205,8 +207,8 @@ def menu_interactif():
             quantite = input("Quantité : ")
             disponible = input("Disponible Oui / Non : ")
             produit = Produit(nom, prix, quantite, disponible)
-            ajouter_produits(fichier, produit)
-            produits.append(produit)
+            ajouter_produits(fichier, produit, proprietaire)
+            produits = lecture_produits(fichier, proprietaire)  # Recharger la liste
             print("Produit ajouté dans votre réserve")
 
         elif choix == '5':
