@@ -46,7 +46,7 @@ class AppInterface(tk.Tk):
         ttk.Button(self.frame_connexion, text="Se connecter", command=self.connexion).grid(row=2, column=0, columnspan=2, pady=10)
         ttk.Button(self.frame_connexion, text="Créer un compte", command=self.afficher_creation_compte).grid(row=3, column=0, columnspan=2)
         ttk.Button(self.frame_connexion, text="Changer de mot de passe", command=self.inferface_changer_mot_de_passe).grid(row=4, column=0, columnspan=2, pady=12)
-        ttk.Button(self.frame_connexion, text="Supprimer un compte", command=self.supprimer_compte).grid(row=5, column=0, columnspan=2, pady=10)
+        ttk.Button(self.frame_connexion, text="Supprimer un compte", command=self.inferface_supression_utilisateur).grid(row=5, column=0, columnspan=2, pady=10)
         
 
     def inferface_changer_mot_de_passe(self):
@@ -84,33 +84,63 @@ class AppInterface(tk.Tk):
             else:
                 messagebox.showerror("Erreur", "Échec du changement de mot de passe")
 
-        ttk.Button(frame_boutons, text="Confirmer", command=fenetre_new_password.destroy).pack(side=tk.LEFT, padx=5)
+        ttk.Button(frame_boutons, text="Confirmer", command=changer_mot_de_passe).pack(side=tk.LEFT, padx=5)
         ttk.Button(frame_boutons, text="Annuler", command=fenetre_new_password.destroy).pack(side=tk.LEFT, padx=5)
 
         # Verification Identifiant et Password
         # Changer le fichier utilisateur.csv pour changer le mot de passe
 
+    def inferface_supression_utilisateur(self):
 
-        
+        fenetre_supression_utilisateur = tk.Toplevel(self)
+        fenetre_supression_utilisateur.title("Suppression Utilisateur")
+        fenetre_supression_utilisateur.geometry("500x500")
 
+        frame = ttk.Frame(fenetre_supression_utilisateur, padding="20")
+        frame.pack(fill=tk.BOTH, expand=True)
 
+        ttk.Label(frame, text="Identifiant :").pack(pady=5)
+        username_entry = ttk.Entry(frame)
+        username_entry.pack(pady=5)
 
-    def verifier_donnees():
-        try:
-            nom = self.username_entry.get()
-            mdp = self.password_entry.get()
-            role = self.gestion_utilisateurs.connexion(nom, mdp)
+        ttk.Label(frame, text="Password :").pack(pady=5)
+        password_entry = ttk.Entry(frame)
+        password_entry.pack(pady=5)
 
-            if role:
-                self.utilisateur_connecte = nom
-                messagebox.showinfo("Succès", f"Connexion réussie en tant que {role}")
-                logging.info(f'Connexion reussite : {nom}')
-            else: 
-                None
-        except ValueError:
-                messagebox.showerror("Erreur", "Prix et quantité doivent être des nombres")
+        frame_boutons = ttk.Frame(frame)
+        frame_boutons.pack(pady=20)
 
+        def supression_utilisateur():
+            nom = username_entry.get()
+            mdp = password_entry.get()
 
+            if self.gestion_utilisateurs.connexion(nom, mdp):  
+                if messagebox.askyesno("Confirmation", "Voulez-vous vraiment supprimer votre compte?"):
+                    if self.gestion_utilisateurs.sup_utilisateur(nom):
+                        messagebox.showinfo("Succès", "Compte supprimé avec succès")
+                        fenetre_supression_utilisateur.destroy()
+            else:
+                messagebox.showerror("Erreur", "Identifiants incorrects")
+
+        ttk.Button(frame_boutons, text="Confirmer", command=supression_utilisateur).pack(side=tk.LEFT, padx=5)
+        ttk.Button(frame_boutons, text="Annuler", command=fenetre_supression_utilisateur.destroy).pack(side=tk.LEFT, padx=5)
+
+    def sup_utilisateur(self, nom_utilisateur):
+        lignes = []
+        utilisateur_trouve = False
+
+        with open(self.fichier_utilisateur, 'r') as fichier:
+            lecteur = csv.DictReader(fichier)
+            lignes = [ligne for ligne in lecteur if ligne['nom_utilisateur'] != nom_utilisateur]
+            utilisateur_trouve = len(lignes) < fichier.tell()
+
+        if utilisateur_trouve:
+            with open(self.fichier_utilisateur, 'w', newline='') as fichier:
+                writer = csv.DictWriter(fichier, fieldnames=['nom_utilisateur', 'mot_de_passe', 'email', 'role'])  # Ajout de 'email'
+                writer.writeheader()
+                writer.writerows(lignes)
+            return True
+        return False
 
 
 
