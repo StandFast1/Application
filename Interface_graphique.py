@@ -62,12 +62,27 @@ class AppInterface(tk.Tk):
         username_entry = ttk.Entry(frame)
         username_entry.pack(pady=5)
 
-        ttk.Label(frame, text="Password :").pack(pady=5)
+        ttk.Label(frame, text="Ancien Password :").pack(pady=5)
+        A_password_entry = ttk.Entry(frame)
+        A_password_entry.pack(pady=5)
+
+        ttk.Label(frame, text="Nouveau Password :").pack(pady=5)
         password_entry = ttk.Entry(frame)
         password_entry.pack(pady=5)
 
         frame_boutons = ttk.Frame(frame)
         frame_boutons.pack(pady=20)
+
+        def changer_mot_de_passe():
+            nom = username_entry.get()
+            ancien_mdp = A_password_entry.get()
+            nouveau_mdp = password_entry.get()
+
+            if self.gestion_utilisateurs.changement_mdp(nom, ancien_mdp, nouveau_mdp):
+                messagebox.showinfo("Succès", "Mot de passe modifié avec succès")
+                fenetre_new_password.destroy()
+            else:
+                messagebox.showerror("Erreur", "Échec du changement de mot de passe")
 
         ttk.Button(frame_boutons, text="Confirmer", command=fenetre_new_password.destroy).pack(side=tk.LEFT, padx=5)
         ttk.Button(frame_boutons, text="Annuler", command=fenetre_new_password.destroy).pack(side=tk.LEFT, padx=5)
