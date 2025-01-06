@@ -157,7 +157,7 @@ class AppInterface(tk.Tk):
             messagebox.showerror("Erreur", "Identifiants incorrects")
 
     def afficher_interface_produits(self):
-        # Cacher l'interface de connexion
+        
         self.frame_connexion.pack_forget()
 
         # Créer l'interface principale
@@ -172,7 +172,7 @@ class AppInterface(tk.Tk):
         self.recherche_entry = ttk.Entry(frame_recherche)
         self.recherche_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
     
-        # Boutons de la barre d'outils
+        # Boutons de la bare d'outils
         frame_boutons = ttk.Frame(frame_recherche)
         frame_boutons.pack(side=tk.RIGHT)
     
@@ -181,7 +181,7 @@ class AppInterface(tk.Tk):
         ttk.Button(frame_boutons, text="Ajouter un produit", command=self.afficher_ajout_produit).pack(side=tk.LEFT, padx=5)
         ttk.Button(frame_boutons, text="Supprimer un produit", command=self.supprimer_produit_selectionne).pack(side=tk.LEFT, padx=5)
 
-        # Liste des produits
+        # Liste des produit
         self.tree = ttk.Treeview(self.frame_principal, columns=('Nom', 'Prix', 'Quantité', 'Disponible'), show='headings')
         self.tree.heading('Nom', text='Nom')
         self.tree.heading('Prix', text='Prix')
@@ -189,10 +189,10 @@ class AppInterface(tk.Tk):
         self.tree.heading('Disponible', text='Disponible')
         self.tree.pack(fill=tk.BOTH, expand=True, pady=10)
 
-        # Bouton déconnexion
+        # Bouton deconnexion
         ttk.Button(self.frame_principal, text="Déconnexion", command=self.deconnexion).pack(pady=10)
 
-        # Charger les produits
+        # Charge les produits
         self.charger_produits()
 
     def supprimer_produit_selectionne(self):
@@ -202,18 +202,18 @@ class AppInterface(tk.Tk):
             return
     
         item = self.tree.item(selection[0])
-        nom_produit = item['values'][0]  # Le nom est la première colonne
+        nom_produit = item['values'][0]  
     
         if messagebox.askyesno("Confirmation", f"Voulez-vous vraiment supprimer le produit '{nom_produit}' ?"):
             try:
                 df = pd.read_csv('produits.csv')
-                # Supprime le produit sélectionné pour l'utilisateur connecté
+               
                 df = df.drop(df[(df['nom'] == nom_produit) & (df['proprietaire'] == self.utilisateur_connecte)].index)
                 df.to_csv('produits.csv', index=False)
             
                 messagebox.showinfo("Succès", "Produit supprimé avec succès")
                 logging.info(f'Produit supprimé : {nom_produit} par {self.utilisateur_connecte}')
-                self.charger_produits()  # Actualise la liste des produits
+                self.charger_produits()  
             except Exception as e:
                 messagebox.showerror("Erreur", f"Erreur lors de la suppression du produit : {e}")
                 logging.error(f'Erreur de suppression : {nom_produit} par {self.utilisateur_connecte} - {e}')
