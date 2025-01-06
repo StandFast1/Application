@@ -1,2 +1,3 @@
-nom_utilisateur,mot_de_passe,role
-admi,XG38mxVXmiLA3bOqfqz8bg==$27fcc4e455e5e2f99825df64bb708e106453f0b5d7ccf72092e88e52a753e3ce,utilisateur
+nom_utilisateur,mot_de_passe,email,role
+J'aimelesfrites,m871ucnL5YCNmZTpE7fAvA==$b8a8323dbc54ddbd4018dfe7a67270698bdd0c274af019a9c1a823c06cb04adb,t@gmail.com,utilisateur
+J'aimelespatates,nxoJmPxkU7fomyQtwI15FQ==$433f0313faa450c1d5f3e8c2b21e766e0cc59107f5ce78645fc8099a224366b7,t@hdhj,utilisateur
