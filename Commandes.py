@@ -34,8 +34,12 @@ class GestionCommandes:
     def verifier_stock(self, produit, quantite):
         try:
             df = pd.read_csv('produits.csv')
-            stock = df[df['nom'] == produit]['quantite'].iloc[0]
-            return stock >= quantite
+            produit_data = df[df['nom'] == produit]
+            if produit_data.empty:
+                logging.error(f"Produit non trouvé: {produit}")
+                return False
+            stock = produit_data['quantite'].iloc[0]
+            return int(stock) >= quantite
         except Exception as e:
             logging.error(f"Erreur vérification stock: {str(e)}")
             return False
