@@ -6,6 +6,7 @@ import pandas as pd
 import os
 import logging
 import csv
+from Notification_email import NotificationEmail
 
 
 
@@ -170,6 +171,7 @@ class AppInterface(tk.Tk):
         ttk.Button(frame_boutons, text="Rechercher", command=self.rechercher_produits).pack(side=tk.LEFT, padx=5)
         ttk.Button(frame_boutons, text="Réinitialiser", command=self.charger_produits).pack(side=tk.LEFT, padx=5)  
         ttk.Button(frame_boutons, text="Ajouter un produit", command=self.afficher_ajout_produit).pack(side=tk.LEFT, padx=5)
+        ttk.Button(frame_boutons, text="Supprimer un produit", command=self.supprimer_produit_selectionne).pack(side=tk.LEFT, padx=5)
 
         # Liste des produits
         self.tree = ttk.Treeview(self.frame_principal, columns=('Nom', 'Prix', 'Quantité', 'Disponible'), show='headings')
@@ -185,7 +187,28 @@ class AppInterface(tk.Tk):
         # Charger les produits
         self.charger_produits()
 
-
+    def supprimer_produit_selectionne(self):
+        selection = self.tree.selection()
+        if not selection:
+            messagebox.showwarning("Attention", "Veuillez sélectionner un produit à supprimer")
+            return
+    
+        item = self.tree.item(selection[0])
+        nom_produit = item['values'][0]  # Le nom est la première colonne
+    
+        if messagebox.askyesno("Confirmation", f"Voulez-vous vraiment supprimer le produit '{nom_produit}' ?"):
+            try:
+                df = pd.read_csv('produits.csv')
+                # Supprime le produit sélectionné pour l'utilisateur connecté
+                df = df.drop(df[(df['nom'] == nom_produit) & (df['proprietaire'] == self.utilisateur_connecte)].index)
+                df.to_csv('produits.csv', index=False)
+            
+                messagebox.showinfo("Succès", "Produit supprimé avec succès")
+                logging.info(f'Produit supprimé : {nom_produit} par {self.utilisateur_connecte}')
+                self.charger_produits()  # Actualise la liste des produits
+            except Exception as e:
+                messagebox.showerror("Erreur", f"Erreur lors de la suppression du produit : {e}")
+                logging.error(f'Erreur de suppression : {nom_produit} par {self.utilisateur_connecte} - {e}')
 
     def afficher_ajout_produit(self):
         fenetre_ajout = tk.Toplevel(self)
