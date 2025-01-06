@@ -26,6 +26,7 @@ class AppInterface(tk.Tk):
 
         self.gestion_utilisateurs = Utilisateur()
         self.utilisateur_connecte = None
+        self.notification = NotificationEmail()
 
         
 
@@ -72,6 +73,10 @@ class AppInterface(tk.Tk):
         password_entry = ttk.Entry(frame)
         password_entry.pack(pady=5)
 
+        ttk.Label(frame, text="Email :").pack(pady=5)  
+        email_entry = ttk.Entry(frame)
+        email_entry.pack(pady=5)
+
         frame_boutons = ttk.Frame(frame)
         frame_boutons.pack(pady=20)
 
@@ -79,9 +84,12 @@ class AppInterface(tk.Tk):
             nom = username_entry.get()
             ancien_mdp = A_password_entry.get()
             nouveau_mdp = password_entry.get()
+            email = email_entry.get()
 
             if self.gestion_utilisateurs.changement_mdp(nom, ancien_mdp, nouveau_mdp):
                 messagebox.showinfo("Succès", "Mot de passe modifié avec succès")
+                details_confirmation = "Votre mot de passe a été modifié avec succès"
+                self.notification.envoyer_alerte(email, details_confirmation)
                 fenetre_new_password.destroy()
             else:
                 messagebox.showerror("Erreur", "Échec du changement de mot de passe")
@@ -375,6 +383,8 @@ class AppInterface(tk.Tk):
 
             if self.gestion_utilisateurs.verif_mot_de_passe_compromis(mdp):
                 logging.warning(f'Mot de passe compromis : {username_entry}')
+                details_compromis = "Votre mot de passe a été détecté comme potentiellement compromis lors de la création de compte."
+                self.notification.envoyer_alerte(email, details_compromis)
                 messagebox.showwarning("Attention", "Ce mot de passe est compromis!")
                 return
 
