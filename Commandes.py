@@ -34,25 +34,30 @@ class GestionCommandes:
     def verifier_stock(self, produit, quantite):
         try:
             df = pd.read_csv('produits.csv')
-            produit_data = df[df['nom'] == produit]
+            df['nom'] = df['nom'].str.strip()  # Enlève les espaces
+            produit_data = df[df['nom'].str.lower() == produit.lower()]
             if produit_data.empty:
-                logging.error(f"Produit non trouvé: {produit}")
                 return False
             stock = produit_data['quantite'].iloc[0]
             return int(stock) >= quantite
         except Exception as e:
-            logging.error(f"Erreur vérification stock: {str(e)}")
+            logging.error(f"Erreur: {str(e)}")
             return False
 
     def sauvegarder_commande(self, commande, acceptee=True):
         fichier = self.fichiers['acceptees'] if acceptee else self.fichiers['refusees']
+        commandes = []
+    
         try:
-            with open(fichier, 'r', encoding='utf-8') as f:
-                commandes = json.load(f)
+            if os.path.exists(fichier) and os.path.getsize(fichier) > 0:
+                with open(fichier, 'r', encoding='utf-8') as f:
+                    commandes = json.load(f)
+        
             commandes.append(commande)
             with open(fichier, 'w', encoding='utf-8') as f:
                 json.dump(commandes, f, indent=4, ensure_ascii=False)
             return True
+        
         except Exception as e:
             logging.error(f"Erreur sauvegarde commande: {str(e)}")
             return False

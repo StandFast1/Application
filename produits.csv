@@ -1,6 +1,6 @@
 nom,prix,quantite,disponible,proprietaire
 abricot,5.0,1,non,J'aimelesfrites
-patates,90.0,800,oui,J'aimelespatates
+patates,90.0,799,oui,J'aimelespatates
 zerdick,20.4,700,non,J'aimelesfrites
 betrave,2.6,4,True,J'aimelesfrites
 pomme de terre,2.1,36,False,
