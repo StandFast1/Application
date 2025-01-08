@@ -180,6 +180,7 @@ class AppInterface(tk.Tk):
         ttk.Button(frame_boutons, text="Réinitialiser", command=self.charger_produits).pack(side=tk.LEFT, padx=5)  
         ttk.Button(frame_boutons, text="Ajouter un produit", command=self.afficher_ajout_produit).pack(side=tk.LEFT, padx=5)
         ttk.Button(frame_boutons, text="Supprimer un produit", command=self.supprimer_produit_selectionne).pack(side=tk.LEFT, padx=5)
+        ttk.Button(frame_boutons, text="Statistiques", command=self.afficher_statistiques).pack(side=tk.LEFT, padx=5)
 
         # Liste des produit
         self.tree = ttk.Treeview(self.frame_principal, columns=('Nom', 'Prix', 'Quantité', 'Disponible'), show='headings')
@@ -397,6 +398,19 @@ class AppInterface(tk.Tk):
                 messagebox.showerror("Erreur", "Erreur lors de la création du compte")
 
         ttk.Button(frame, text="Créer le compte", command=creer_compte).pack(pady=20)
+    
+    def afficher_statistiques(self):
+        from stats import Statistiques
+        stats = Statistiques()
+        stats.generer_graphiques()
+    
+        fenetre_stats = tk.Toplevel(self)
+        fenetre_stats.title("Statistiques")
+    
+        img = tk.PhotoImage(file='statistiques.png')
+        label = tk.Label(fenetre_stats, image=img)
+        label.image = img
+        label.pack()
 
 if __name__ == "__main__":
     app = AppInterface()
