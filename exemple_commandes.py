@@ -4,8 +4,8 @@ def test_commande():
     try:
         gestionnaire = GestionCommandes()
         succes, commande = gestionnaire.traiter_commande(
-            client="J'aimelespatates",
-            vendeur="J'aimelespatates",
+            client="JeanPierreDelabuse2",
+            vendeur="JeanPierreDelabuse",
             produit="patates",
             quantite=900,
             prix_unitaire=90.0
