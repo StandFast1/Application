@@ -7,6 +7,8 @@ import os
 import logging
 import csv
 from Notification_email import NotificationEmail
+import json
+from Commandes import GestionCommandes
 
 
 
@@ -21,11 +23,12 @@ class AppInterface(tk.Tk):
         super().__init__()
 
         self.title("Application Python by Tim")
-        self.geometry("800x600")
+        self.geometry("900x700")
 
 
         self.gestion_utilisateurs = Utilisateur()
         self.utilisateur_connecte = None
+        self.notification = NotificationEmail()
 
         
 
@@ -72,6 +75,10 @@ class AppInterface(tk.Tk):
         password_entry = ttk.Entry(frame)
         password_entry.pack(pady=5)
 
+        ttk.Label(frame, text="Email :").pack(pady=5)  
+        email_entry = ttk.Entry(frame)
+        email_entry.pack(pady=5)
+
         frame_boutons = ttk.Frame(frame)
         frame_boutons.pack(pady=20)
 
@@ -79,9 +86,12 @@ class AppInterface(tk.Tk):
             nom = username_entry.get()
             ancien_mdp = A_password_entry.get()
             nouveau_mdp = password_entry.get()
+            email = email_entry.get()
 
             if self.gestion_utilisateurs.changement_mdp(nom, ancien_mdp, nouveau_mdp):
                 messagebox.showinfo("Succès", "Mot de passe modifié avec succès")
+                details_confirmation = "Votre mot de passe a été modifié avec succès"
+                self.notification.envoyer_alerte(email, details_confirmation)
                 fenetre_new_password.destroy()
             else:
                 messagebox.showerror("Erreur", "Échec du changement de mot de passe")
@@ -130,7 +140,6 @@ class AppInterface(tk.Tk):
     
 
 
-   
 
     
         
@@ -149,14 +158,14 @@ class AppInterface(tk.Tk):
             messagebox.showerror("Erreur", "Identifiants incorrects")
 
     def afficher_interface_produits(self):
-        # Cacher l'interface de connexion
+        
         self.frame_connexion.pack_forget()
 
-        # Créer l'interface principale
+        # interface principale
         self.frame_principal = ttk.Frame(self)
         self.frame_principal.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
 
-        # Barre de recherche
+        # recherche
         frame_recherche = ttk.Frame(self.frame_principal)
         frame_recherche.pack(fill=tk.X, pady=10)
         
@@ -164,16 +173,32 @@ class AppInterface(tk.Tk):
         self.recherche_entry = ttk.Entry(frame_recherche)
         self.recherche_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
     
-        # Boutons de la barre d'outils
         frame_boutons = ttk.Frame(frame_recherche)
         frame_boutons.pack(side=tk.RIGHT)
+
+        frame_tri = ttk.Frame(self.frame_principal)
+        frame_tri.pack(fill=tk.X, pady=5)
+    
+        ttk.Label(frame_tri, text="Trier par :").pack(side=tk.LEFT, padx=5)
+
+        def appliquer_tri(choix):
+            self.charger_produits(tri_par=choix, ordre='asc')
+    
+        ttk.Button(frame_tri, text="Nom", 
+               command=lambda: appliquer_tri('nom')).pack(side=tk.LEFT, padx=2)
+        ttk.Button(frame_tri, text="Prix", 
+               command=lambda: appliquer_tri('prix')).pack(side=tk.LEFT, padx=2)
+        ttk.Button(frame_tri, text="Quantité", 
+               command=lambda: appliquer_tri('quantite')).pack(side=tk.LEFT, padx=2)
     
         ttk.Button(frame_boutons, text="Rechercher", command=self.rechercher_produits).pack(side=tk.LEFT, padx=5)
         ttk.Button(frame_boutons, text="Réinitialiser", command=self.charger_produits).pack(side=tk.LEFT, padx=5)  
         ttk.Button(frame_boutons, text="Ajouter un produit", command=self.afficher_ajout_produit).pack(side=tk.LEFT, padx=5)
         ttk.Button(frame_boutons, text="Supprimer un produit", command=self.supprimer_produit_selectionne).pack(side=tk.LEFT, padx=5)
+        ttk.Button(frame_boutons, text="Statistiques", command=self.afficher_statistiques).pack(side=tk.LEFT, padx=5)
+        ttk.Button(frame_boutons, text="Gestion Commandes", command=self.afficher_gestion_commandes).pack(side=tk.LEFT, padx=5)
 
-        # Liste des produits
+        
         self.tree = ttk.Treeview(self.frame_principal, columns=('Nom', 'Prix', 'Quantité', 'Disponible'), show='headings')
         self.tree.heading('Nom', text='Nom')
         self.tree.heading('Prix', text='Prix')
@@ -181,11 +206,12 @@ class AppInterface(tk.Tk):
         self.tree.heading('Disponible', text='Disponible')
         self.tree.pack(fill=tk.BOTH, expand=True, pady=10)
 
-        # Bouton déconnexion
+        
         ttk.Button(self.frame_principal, text="Déconnexion", command=self.deconnexion).pack(pady=10)
 
-        # Charger les produits
+       
         self.charger_produits()
+
 
     def supprimer_produit_selectionne(self):
         selection = self.tree.selection()
@@ -194,21 +220,22 @@ class AppInterface(tk.Tk):
             return
     
         item = self.tree.item(selection[0])
-        nom_produit = item['values'][0]  # Le nom est la première colonne
+        nom_produit = item['values'][0]  
     
         if messagebox.askyesno("Confirmation", f"Voulez-vous vraiment supprimer le produit '{nom_produit}' ?"):
             try:
                 df = pd.read_csv('produits.csv')
-                # Supprime le produit sélectionné pour l'utilisateur connecté
+               
                 df = df.drop(df[(df['nom'] == nom_produit) & (df['proprietaire'] == self.utilisateur_connecte)].index)
                 df.to_csv('produits.csv', index=False)
             
                 messagebox.showinfo("Succès", "Produit supprimé avec succès")
                 logging.info(f'Produit supprimé : {nom_produit} par {self.utilisateur_connecte}')
-                self.charger_produits()  # Actualise la liste des produits
+                self.charger_produits()  
             except Exception as e:
                 messagebox.showerror("Erreur", f"Erreur lors de la suppression du produit : {e}")
                 logging.error(f'Erreur de suppression : {nom_produit} par {self.utilisateur_connecte} - {e}')
+
 
     def afficher_ajout_produit(self):
         fenetre_ajout = tk.Toplevel(self)
@@ -302,10 +329,12 @@ class AppInterface(tk.Tk):
         ttk.Button(frame_boutons, text="Annuler", command=fenetre_ajout.destroy).pack(side=tk.LEFT, padx=5)
 
     
-    def charger_produits(self):
+    def charger_produits(self, tri_par=None, ordre='asc'):
         try:
             df = pd.read_csv('produits.csv')
             df = df[df['proprietaire'] == self.utilisateur_connecte]
+            if tri_par:
+                df = df.sort_values(by=tri_par, ascending=(ordre == 'asc'))
             self.tree.delete(*self.tree.get_children())
 
             for _, row in df.iterrows():
@@ -375,6 +404,8 @@ class AppInterface(tk.Tk):
 
             if self.gestion_utilisateurs.verif_mot_de_passe_compromis(mdp):
                 logging.warning(f'Mot de passe compromis : {username_entry}')
+                details_compromis = "Votre mot de passe a été détecté comme potentiellement compromis lors de la création de compte."
+                self.notification.envoyer_alerte(email, details_compromis)
                 messagebox.showwarning("Attention", "Ce mot de passe est compromis!")
                 return
 
@@ -387,6 +418,123 @@ class AppInterface(tk.Tk):
                 messagebox.showerror("Erreur", "Erreur lors de la création du compte")
 
         ttk.Button(frame, text="Créer le compte", command=creer_compte).pack(pady=20)
+    
+    def afficher_statistiques(self):
+        from stats import Statistiques
+        stats = Statistiques()
+        stats.generer_graphiques()
+    
+        fenetre_stats = tk.Toplevel(self)
+        fenetre_stats.title("Statistiques")
+    
+        img = tk.PhotoImage(file='statistiques.png')
+        label = tk.Label(fenetre_stats, image=img)
+        label.image = img
+        label.pack()
+    
+    def afficher_gestion_commandes(self):
+        from Commandes import GestionCommandes
+    
+        fenetre_commandes = tk.Toplevel(self)
+        fenetre_commandes.title("Gestion des Commandes")
+        fenetre_commandes.geometry("600x600")
+
+        frame = ttk.Frame(fenetre_commandes, padding="20")
+        frame.pack(fill=tk.BOTH, expand=True)
+
+        
+        ttk.Label(frame, text="Client :").pack(pady=5)
+        client_entry = ttk.Entry(frame)
+        client_entry.pack(pady=5)
+
+        ttk.Label(frame, text="Produit :").pack(pady=5)
+        produit_entry = ttk.Entry(frame)
+        produit_entry.pack(pady=5)
+
+        ttk.Label(frame, text="Quantité :").pack(pady=5)
+        quantite_entry = ttk.Entry(frame)
+        quantite_entry.pack(pady=5)
+
+        # afficher les commandes
+        tree_commandes = ttk.Treeview(frame, columns=('ID', 'Date', 'Client', 'Produit', 'Quantité', 'Total'), show='headings')
+        tree_commandes.heading('ID', text='ID')
+        tree_commandes.heading('Date', text='Date')
+        tree_commandes.heading('Client', text='Client')
+        tree_commandes.heading('Produit', text='Produit')
+        tree_commandes.heading('Quantité', text='Quantité')
+        tree_commandes.heading('Total', text='Total')
+        tree_commandes.pack(fill=tk.BOTH, expand=True, pady=10)
+
+        def traiter_nouvelle_commande():
+            try:
+                gestionnaire = GestionCommandes()
+                client = client_entry.get()
+                produit = produit_entry.get()
+                quantite = int(quantite_entry.get())
+            
+                # Récupérer le prix du produit depuis le CSV
+                df = pd.read_csv('produits.csv')
+                produit_info = df[df['nom'] == produit]
+                if produit_info.empty:
+                    messagebox.showerror("Erreur", "Produit non trouvé")
+                    return
+                
+                prix_unitaire = float(produit_info['prix'].iloc[0])
+            
+                succes, commande = gestionnaire.traiter_commande(
+                    client=client,
+                    vendeur=self.utilisateur_connecte,
+                    produit=produit,
+                    quantite=quantite,
+                    prix_unitaire=prix_unitaire
+                )
+            
+                if succes:
+                    messagebox.showinfo("Succès", "Commande traitée avec succès!")
+                    charger_commandes()  # Rafraîchir l'affichage
+                    # Envoyer notification par email si configuré
+                    if hasattr(self, 'notification'):
+                        self.notification.envoyer_alerte(
+                            client_entry.get(),
+                            f"Votre commande {commande['id']} a été traitée avec succès!"
+                        )
+                else:
+                    messagebox.showerror("Erreur", "Impossible de traiter la commande (stock insuffisant)")
+                
+            except ValueError:
+                messagebox.showerror("Erreur", "Veuillez vérifier les données saisies")
+            except Exception as e:
+                messagebox.showerror("Erreur", f"Erreur lors du traitement de la commande: {str(e)}")
+
+        def charger_commandes():
+            tree_commandes.delete(*tree_commandes.get_children())
+            try:
+                with open('commandes_acceptees.json', 'r') as f:
+                    commandes = json.load(f)
+                    for cmd in commandes:
+                        if cmd['vendeur'] == self.utilisateur_connecte:
+                            tree_commandes.insert('', tk.END, values=(
+                                cmd['id'],
+                                cmd['date'],
+                                cmd['client'],
+                                cmd['produit'],
+                                cmd['quantite'],
+                                f"{cmd['prix_total']}€"
+                            ))
+            except Exception as e:
+                logging.error(f"Erreur chargement commandes: {str(e)}")
+
+        # Boutons de contrôle
+        frame_boutons = ttk.Frame(frame)
+        frame_boutons.pack(pady=10)
+    
+        ttk.Button(frame_boutons, text="Traiter Commande", command=traiter_nouvelle_commande).pack(side=tk.LEFT, padx=5)
+        ttk.Button(frame_boutons, text="Rafraîchir", command=charger_commandes).pack(side=tk.LEFT, padx=5)
+        ttk.Button(frame_boutons, text="Fermer", command=fenetre_commandes.destroy).pack(side=tk.LEFT, padx=5)
+
+        # Charger les commandes existantes
+        charger_commandes()
+    
 
 if __name__ == "__main__":
     app = AppInterface()

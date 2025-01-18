@@ -13,7 +13,7 @@ logging.basicConfig(
 
 
 
-# Fonction principale :
+
 def gestion():
     fichier = 'produits.csv'
     if not os.path.exists(fichier):
@@ -34,7 +34,7 @@ class Produit:
         self.proprietaire = proprietaire
 
     def __str__(self):
-        return f"Produit: {self.nom}, Prix: {self.prix}€, Quantite: {self.quantite}, Disponible: {self.disponible}, proprietaire: {self.proprietaire}"  # Indication par produit
+        return f"Produit: {self.nom}, Prix: {self.prix}€, Quantite: {self.quantite}, Disponible: {self.disponible}, proprietaire: {self.proprietaire}"  
     
 
 

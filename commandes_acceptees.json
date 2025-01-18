@@ -1,0 +1,32 @@
+[
+    {
+        "id": "2879676e-debd-4ef6-8a78-f583397c92c2",
+        "date": "2025-01-08 17:38:56",
+        "client": "J'aimelespatates",
+        "vendeur": "J'aimelespatates",
+        "produit": "patates",
+        "quantite": 1,
+        "prix_unitaire": 90.0,
+        "prix_total": 90.0
+    },
+    {
+        "id": "1c42a6ee-377c-4015-a695-59cb9d09a8b0",
+        "date": "2025-01-18 13:37:22",
+        "client": "JeanPierreDelabuse1",
+        "vendeur": "JeanPierreDelabuse",
+        "produit": "Abricot",
+        "quantite": 8,
+        "prix_unitaire": 2.3,
+        "prix_total": 18.4
+    },
+    {
+        "id": "e6f6d8d2-161c-4363-9c93-6b76b25c1b15",
+        "date": "2025-01-18 13:51:52",
+        "client": "JeanPierreDelabuse3",
+        "vendeur": "JeanPierreDelabuse",
+        "produit": "Noix",
+        "quantite": 7,
+        "prix_unitaire": 6.0,
+        "prix_total": 42.0
+    }
+]

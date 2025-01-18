@@ -1,0 +1,22 @@
+[
+    {
+        "id": "446512c1-0408-4e14-9d5b-eec2c585bd90",
+        "date": "2025-01-08 17:39:19",
+        "client": "J'aimelespatates",
+        "vendeur": "J'aimelespatates",
+        "produit": "patates",
+        "quantite": 900,
+        "prix_unitaire": 90.0,
+        "prix_total": 81000.0
+    },
+    {
+        "id": "b579a3cf-2d44-4728-91e3-b293d8016efc",
+        "date": "2025-01-18 13:52:20",
+        "client": "JeanPierreDelabuse2",
+        "vendeur": "JeanPierreDelabuse",
+        "produit": "Pasteque",
+        "quantite": 40,
+        "prix_unitaire": 8.2,
+        "prix_total": 328.0
+    }
+]

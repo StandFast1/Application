@@ -1,9 +1,11 @@
 nom,prix,quantite,disponible,proprietaire
-abricot,5.0,1,non,J'aimelesfrites
-patates,90.0,800,oui,J'aimelespatates
-zerdick,20.4,700,non,J'aimelesfrites
-betrave,2.6,4,True,J'aimelesfrites
-pomme de terre,2.1,36,False,
-test,2.0,4,False,J'aimelespatates
-Abricot,2.3,8,False,J'aimelesfrites
-Abricot,3.4,52,False,J'aimelespatates
+Abricot,2.3,2,True,JeanPierreDelabuse
+Datte,1.5,3,True,JeanPierreDelabuse
+Noix,6.0,10,False,JeanPierreDelabuse
+Orange,4.99,23,True,JeanPierreDelabuse
+Pamplemousse,7.4,5,True,JeanPierreDelabuse
+Pasteque,8.2,0,False,JeanPierreDelabuse
+Chaise ,84.0,12,True,JeanPierreDelabuse1
+Table 3 pied,47.0,2,True,JeanPierreDelabuse1
+Table cuisine,74.0,4,False,JeanPierreDelabuse1
+Frigo,199.99,14,True,JeanPierreDelabuse1
