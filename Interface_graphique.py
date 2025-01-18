@@ -175,6 +175,21 @@ class AppInterface(tk.Tk):
     
         frame_boutons = ttk.Frame(frame_recherche)
         frame_boutons.pack(side=tk.RIGHT)
+
+        frame_tri = ttk.Frame(self.frame_principal)
+        frame_tri.pack(fill=tk.X, pady=5)
+    
+        ttk.Label(frame_tri, text="Trier par :").pack(side=tk.LEFT, padx=5)
+
+        def appliquer_tri(choix):
+            self.charger_produits(tri_par=choix, ordre='asc')
+    
+        ttk.Button(frame_tri, text="Nom", 
+               command=lambda: appliquer_tri('nom')).pack(side=tk.LEFT, padx=2)
+        ttk.Button(frame_tri, text="Prix", 
+               command=lambda: appliquer_tri('prix')).pack(side=tk.LEFT, padx=2)
+        ttk.Button(frame_tri, text="Quantité", 
+               command=lambda: appliquer_tri('quantite')).pack(side=tk.LEFT, padx=2)
     
         ttk.Button(frame_boutons, text="Rechercher", command=self.rechercher_produits).pack(side=tk.LEFT, padx=5)
         ttk.Button(frame_boutons, text="Réinitialiser", command=self.charger_produits).pack(side=tk.LEFT, padx=5)  
@@ -314,10 +329,12 @@ class AppInterface(tk.Tk):
         ttk.Button(frame_boutons, text="Annuler", command=fenetre_ajout.destroy).pack(side=tk.LEFT, padx=5)
 
     
-    def charger_produits(self):
+    def charger_produits(self, tri_par=None, ordre='asc'):
         try:
             df = pd.read_csv('produits.csv')
             df = df[df['proprietaire'] == self.utilisateur_connecte]
+            if tri_par:
+                df = df.sort_values(by=tri_par, ascending=(ordre == 'asc'))
             self.tree.delete(*self.tree.get_children())
 
             for _, row in df.iterrows():
