@@ -22,6 +22,8 @@ class AppInterface(tk.Tk):
 
         self.title("Application Python by Tim")
         self.geometry("800x600")
+
+
         self.gestion_utilisateurs = Utilisateur()
         self.utilisateur_connecte = None
         self.notification = NotificationEmail()
@@ -71,6 +73,10 @@ class AppInterface(tk.Tk):
         password_entry = ttk.Entry(frame)
         password_entry.pack(pady=5)
 
+        ttk.Label(frame, text="Email :").pack(pady=5)  
+        email_entry = ttk.Entry(frame)
+        email_entry.pack(pady=5)
+
         frame_boutons = ttk.Frame(frame)
         frame_boutons.pack(pady=20)
 
@@ -78,9 +84,12 @@ class AppInterface(tk.Tk):
             nom = username_entry.get()
             ancien_mdp = A_password_entry.get()
             nouveau_mdp = password_entry.get()
+            email = email_entry.get()
 
             if self.gestion_utilisateurs.changement_mdp(nom, ancien_mdp, nouveau_mdp):
                 messagebox.showinfo("Succès", "Mot de passe modifié avec succès")
+                details_confirmation = "Votre mot de passe a été modifié avec succès"
+                self.notification.envoyer_alerte(email, details_confirmation)
                 fenetre_new_password.destroy()
             else:
                 messagebox.showerror("Erreur", "Échec du changement de mot de passe")
@@ -169,6 +178,8 @@ class AppInterface(tk.Tk):
         ttk.Button(frame_boutons, text="Rechercher", command=self.rechercher_produits).pack(side=tk.LEFT, padx=5)
         ttk.Button(frame_boutons, text="Réinitialiser", command=self.charger_produits).pack(side=tk.LEFT, padx=5)  
         ttk.Button(frame_boutons, text="Ajouter un produit", command=self.afficher_ajout_produit).pack(side=tk.LEFT, padx=5)
+        ttk.Button(frame_boutons, text="Supprimer un produit", command=self.supprimer_produit_selectionne).pack(side=tk.LEFT, padx=5)
+        ttk.Button(frame_boutons, text="Statistiques", command=self.afficher_statistiques).pack(side=tk.LEFT, padx=5)
 
         
         self.tree = ttk.Treeview(self.frame_principal, columns=('Nom', 'Prix', 'Quantité', 'Disponible'), show='headings')
@@ -184,6 +195,29 @@ class AppInterface(tk.Tk):
         # Charger les produits
         self.charger_produits()
 
+
+    def supprimer_produit_selectionne(self):
+        selection = self.tree.selection()
+        if not selection:
+            messagebox.showwarning("Attention", "Veuillez sélectionner un produit à supprimer")
+            return
+    
+        item = self.tree.item(selection[0])
+        nom_produit = item['values'][0]  
+    
+        if messagebox.askyesno("Confirmation", f"Voulez-vous vraiment supprimer le produit '{nom_produit}' ?"):
+            try:
+                df = pd.read_csv('produits.csv')
+               
+                df = df.drop(df[(df['nom'] == nom_produit) & (df['proprietaire'] == self.utilisateur_connecte)].index)
+                df.to_csv('produits.csv', index=False)
+            
+                messagebox.showinfo("Succès", "Produit supprimé avec succès")
+                logging.info(f'Produit supprimé : {nom_produit} par {self.utilisateur_connecte}')
+                self.charger_produits()  
+            except Exception as e:
+                messagebox.showerror("Erreur", f"Erreur lors de la suppression du produit : {e}")
+                logging.error(f'Erreur de suppression : {nom_produit} par {self.utilisateur_connecte} - {e}')
 
 
     def afficher_ajout_produit(self):
@@ -351,6 +385,8 @@ class AppInterface(tk.Tk):
 
             if self.gestion_utilisateurs.verif_mot_de_passe_compromis(mdp):
                 logging.warning(f'Mot de passe compromis : {username_entry}')
+                details_compromis = "Votre mot de passe a été détecté comme potentiellement compromis lors de la création de compte."
+                self.notification.envoyer_alerte(email, details_compromis)
                 messagebox.showwarning("Attention", "Ce mot de passe est compromis!")
                 return
 
@@ -363,6 +399,19 @@ class AppInterface(tk.Tk):
                 messagebox.showerror("Erreur", "Erreur lors de la création du compte")
 
         ttk.Button(frame, text="Créer le compte", command=creer_compte).pack(pady=20)
+    
+    def afficher_statistiques(self):
+        from stats import Statistiques
+        stats = Statistiques()
+        stats.generer_graphiques()
+    
+        fenetre_stats = tk.Toplevel(self)
+        fenetre_stats.title("Statistiques")
+    
+        img = tk.PhotoImage(file='statistiques.png')
+        label = tk.Label(fenetre_stats, image=img)
+        label.image = img
+        label.pack()
 
 if __name__ == "__main__":
     app = AppInterface()
