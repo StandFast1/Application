@@ -7,6 +7,8 @@ import os
 import logging
 import csv
 from Notification_email import NotificationEmail
+import json
+from Commandes import GestionCommandes
 
 
 
@@ -138,7 +140,6 @@ class AppInterface(tk.Tk):
     
 
 
-   
 
     
         
@@ -157,14 +158,14 @@ class AppInterface(tk.Tk):
             messagebox.showerror("Erreur", "Identifiants incorrects")
 
     def afficher_interface_produits(self):
-        # Cacher l'interface de connexion
+        
         self.frame_connexion.pack_forget()
 
-        # Créer l'interface principale
+        # interface principale
         self.frame_principal = ttk.Frame(self)
         self.frame_principal.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
 
-        # Barre de recherche
+        # recherche
         frame_recherche = ttk.Frame(self.frame_principal)
         frame_recherche.pack(fill=tk.X, pady=10)
         
@@ -180,6 +181,7 @@ class AppInterface(tk.Tk):
         ttk.Button(frame_boutons, text="Ajouter un produit", command=self.afficher_ajout_produit).pack(side=tk.LEFT, padx=5)
         ttk.Button(frame_boutons, text="Supprimer un produit", command=self.supprimer_produit_selectionne).pack(side=tk.LEFT, padx=5)
         ttk.Button(frame_boutons, text="Statistiques", command=self.afficher_statistiques).pack(side=tk.LEFT, padx=5)
+        ttk.Button(frame_boutons, text="Gestion Commandes", command=self.afficher_gestion_commandes).pack(side=tk.LEFT, padx=5)
 
         
         self.tree = ttk.Treeview(self.frame_principal, columns=('Nom', 'Prix', 'Quantité', 'Disponible'), show='headings')
@@ -189,10 +191,10 @@ class AppInterface(tk.Tk):
         self.tree.heading('Disponible', text='Disponible')
         self.tree.pack(fill=tk.BOTH, expand=True, pady=10)
 
-        # Bouton déconnexion
+        
         ttk.Button(self.frame_principal, text="Déconnexion", command=self.deconnexion).pack(pady=10)
 
-        # Charger les produits
+       
         self.charger_produits()
 
 
