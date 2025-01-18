@@ -1,7 +1,7 @@
 nom,prix,quantite,disponible,proprietaire
-Abricot,2.3,10,True,JeanPierreDelabuse
+Abricot,2.3,2,True,JeanPierreDelabuse
 Datte,1.5,3,True,JeanPierreDelabuse
-Noix,6.0,17,False,JeanPierreDelabuse
+Noix,6.0,10,False,JeanPierreDelabuse
 Orange,4.99,23,True,JeanPierreDelabuse
 Pamplemousse,7.4,5,True,JeanPierreDelabuse
 Pasteque,8.2,0,False,JeanPierreDelabuse

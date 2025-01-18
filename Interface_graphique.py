@@ -23,7 +23,7 @@ class AppInterface(tk.Tk):
         super().__init__()
 
         self.title("Application Python by Tim")
-        self.geometry("800x600")
+        self.geometry("900x700")
 
 
         self.gestion_utilisateurs = Utilisateur()
@@ -414,6 +414,110 @@ class AppInterface(tk.Tk):
         label = tk.Label(fenetre_stats, image=img)
         label.image = img
         label.pack()
+    
+    def afficher_gestion_commandes(self):
+        from Commandes import GestionCommandes
+    
+        fenetre_commandes = tk.Toplevel(self)
+        fenetre_commandes.title("Gestion des Commandes")
+        fenetre_commandes.geometry("600x600")
+
+        frame = ttk.Frame(fenetre_commandes, padding="20")
+        frame.pack(fill=tk.BOTH, expand=True)
+
+        
+        ttk.Label(frame, text="Client :").pack(pady=5)
+        client_entry = ttk.Entry(frame)
+        client_entry.pack(pady=5)
+
+        ttk.Label(frame, text="Produit :").pack(pady=5)
+        produit_entry = ttk.Entry(frame)
+        produit_entry.pack(pady=5)
+
+        ttk.Label(frame, text="Quantité :").pack(pady=5)
+        quantite_entry = ttk.Entry(frame)
+        quantite_entry.pack(pady=5)
+
+        # afficher les commandes
+        tree_commandes = ttk.Treeview(frame, columns=('ID', 'Date', 'Client', 'Produit', 'Quantité', 'Total'), show='headings')
+        tree_commandes.heading('ID', text='ID')
+        tree_commandes.heading('Date', text='Date')
+        tree_commandes.heading('Client', text='Client')
+        tree_commandes.heading('Produit', text='Produit')
+        tree_commandes.heading('Quantité', text='Quantité')
+        tree_commandes.heading('Total', text='Total')
+        tree_commandes.pack(fill=tk.BOTH, expand=True, pady=10)
+
+        def traiter_nouvelle_commande():
+            try:
+                gestionnaire = GestionCommandes()
+                client = client_entry.get()
+                produit = produit_entry.get()
+                quantite = int(quantite_entry.get())
+            
+                # Récupérer le prix du produit depuis le CSV
+                df = pd.read_csv('produits.csv')
+                produit_info = df[df['nom'] == produit]
+                if produit_info.empty:
+                    messagebox.showerror("Erreur", "Produit non trouvé")
+                    return
+                
+                prix_unitaire = float(produit_info['prix'].iloc[0])
+            
+                succes, commande = gestionnaire.traiter_commande(
+                    client=client,
+                    vendeur=self.utilisateur_connecte,
+                    produit=produit,
+                    quantite=quantite,
+                    prix_unitaire=prix_unitaire
+                )
+            
+                if succes:
+                    messagebox.showinfo("Succès", "Commande traitée avec succès!")
+                    charger_commandes()  # Rafraîchir l'affichage
+                    # Envoyer notification par email si configuré
+                    if hasattr(self, 'notification'):
+                        self.notification.envoyer_alerte(
+                            client_entry.get(),
+                            f"Votre commande {commande['id']} a été traitée avec succès!"
+                        )
+                else:
+                    messagebox.showerror("Erreur", "Impossible de traiter la commande (stock insuffisant)")
+                
+            except ValueError:
+                messagebox.showerror("Erreur", "Veuillez vérifier les données saisies")
+            except Exception as e:
+                messagebox.showerror("Erreur", f"Erreur lors du traitement de la commande: {str(e)}")
+
+        def charger_commandes():
+            tree_commandes.delete(*tree_commandes.get_children())
+            try:
+                with open('commandes_acceptees.json', 'r') as f:
+                    commandes = json.load(f)
+                    for cmd in commandes:
+                        if cmd['vendeur'] == self.utilisateur_connecte:
+                            tree_commandes.insert('', tk.END, values=(
+                                cmd['id'],
+                                cmd['date'],
+                                cmd['client'],
+                                cmd['produit'],
+                                cmd['quantite'],
+                                f"{cmd['prix_total']}€"
+                            ))
+            except Exception as e:
+                logging.error(f"Erreur chargement commandes: {str(e)}")
+
+        # Boutons de contrôle
+        frame_boutons = ttk.Frame(frame)
+        frame_boutons.pack(pady=10)
+    
+        ttk.Button(frame_boutons, text="Traiter Commande", command=traiter_nouvelle_commande).pack(side=tk.LEFT, padx=5)
+        ttk.Button(frame_boutons, text="Rafraîchir", command=charger_commandes).pack(side=tk.LEFT, padx=5)
+        ttk.Button(frame_boutons, text="Fermer", command=fenetre_commandes.destroy).pack(side=tk.LEFT, padx=5)
+
+        # Charger les commandes existantes
+        charger_commandes()
+    
 
 if __name__ == "__main__":
     app = AppInterface()
