@@ -16,4 +16,4 @@ COPY . .
 
 EXPOSE 8080
 
-CMD ["python", "Interface_graphique.py"]
+CMD ["python", "Main.py"]
