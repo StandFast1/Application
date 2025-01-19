@@ -18,5 +18,15 @@
         "quantite": 40,
         "prix_unitaire": 8.2,
         "prix_total": 328.0
+    },
+    {
+        "id": "01f7ed83-20e1-4e35-8301-989d384055e2",
+        "date": "2025-01-19 17:12:33",
+        "client": "Jean Renne",
+        "vendeur": "JeanPierreDelabuse",
+        "produit": "Datte",
+        "quantite": 10,
+        "prix_unitaire": 1.5,
+        "prix_total": 15.0
     }
 ]

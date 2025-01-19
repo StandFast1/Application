@@ -19,7 +19,7 @@ class NotificationEmail:
         message = MIMEMultipart()
         message["From"] = self.email_expediteur.encode('utf-8').decode('ascii', 'ignore')
         message["To"] = email_utilisateur.encode('utf-8').decode('ascii', 'ignore')
-        message["Subject"] = "Alerte de sécurité - Compromission détectée"
+        message["Subject"] = "Alerte de sécurite - Compromission detectee"
 
        
         contenu = f"""
@@ -29,7 +29,7 @@ class NotificationEmail:
         {details_compromis}
 
         Actions recommandees :
-        1. Changez immédiatement votre mot de passe
+        1. Changez immediatement votre mot de passe
         2. Activez l'authentification à deux facteurs si disponible
         3. Ne réutilisez pas ce mot de passe sur d'autres sites
 
