@@ -17,4 +17,4 @@ COPY . .
 
 EXPOSE 8080
 
-CMD ["xvfb-run","python", "Interface_graphique.py"]
+CMD ["python", "Interface_graphique.py"]
