@@ -22,7 +22,7 @@ class AppInterface(tk.Tk):
     def __init__(self):
         super().__init__()
 
-        self.title("Application Python by Tim")
+        self.title("Application Gestion Python by Tim")
         self.geometry("900x700")
 
 
@@ -30,7 +30,6 @@ class AppInterface(tk.Tk):
         self.utilisateur_connecte = None
         self.notification = NotificationEmail()
 
-        
 
         self.creer_interface_connexion()
 
