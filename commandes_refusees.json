@@ -28,5 +28,15 @@
         "quantite": 10,
         "prix_unitaire": 1.5,
         "prix_total": 15.0
+    },
+    {
+        "id": "96cacb38-969c-45d1-bc6f-acabb399a2ac",
+        "date": "2025-01-19 17:27:08",
+        "client": "Jean Marie",
+        "vendeur": "JeanPierreDelabuse",
+        "produit": "Noix",
+        "quantite": 20,
+        "prix_unitaire": 6.0,
+        "prix_total": 120.0
     }
 ]
